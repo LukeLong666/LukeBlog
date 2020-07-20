@@ -78,7 +78,7 @@
         * 获取网站标题
         * 设置网站标题
 
-  ## [数据库设计](C:\Users\zhang\Desktop\数据库设计.md)
+  ## [数据库设计](/Database.md)
 
   ## API接口设计
 
