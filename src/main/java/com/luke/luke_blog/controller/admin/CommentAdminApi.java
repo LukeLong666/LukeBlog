@@ -18,10 +18,6 @@ public class CommentAdminApi {
         return ResponseResult.success(null);
     }
 
-    @GetMapping("/{commentId}")
-    public ResponseResult getComment(@PathVariable("commentId") String commentId) {
-        return ResponseResult.success(null);
-    }
 
     @GetMapping("/list")
     public ResponseResult listComments(@RequestParam("page") int page,@RequestParam("size") int size) {
