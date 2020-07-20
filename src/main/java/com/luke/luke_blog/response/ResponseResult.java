@@ -13,6 +13,13 @@ public class ResponseResult {
     private String message;
     private Object data;
 
+    public ResponseResult(Boolean success, Integer code, String message, Object data) {
+        this.success = success;
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
+
     public Boolean getSuccess() {
         return success;
     }
@@ -43,5 +50,29 @@ public class ResponseResult {
 
     public void setData(Object data) {
         this.data = data;
+    }
+
+    public static ResponseResult success(Integer code,String message,Object data) {
+        return new ResponseResult(true,code,message,data);
+    }
+
+    public static ResponseResult success(String message,Object data) {
+        return new ResponseResult(true,20000,message,data);
+    }
+
+    public static ResponseResult success(Object data) {
+        return new ResponseResult(true,20000,"No message",data);
+    }
+
+    public static ResponseResult failure(Integer code,String message,Object data) {
+        return new ResponseResult(false,code,message,data);
+    }
+
+    public static ResponseResult failure(String message,Object data) {
+        return new ResponseResult(false,0,message,data);
+    }
+
+    public static ResponseResult failure(String message) {
+        return new ResponseResult(false,0,message,null);
     }
 }
