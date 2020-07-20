@@ -8,7 +8,7 @@ spring:
     username: root
     password: root
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/eesy
+    url: jdbc:mysql://localhost:3306/luke_blog?charterEncoding=utf-8&userSSL=false
     type: com.alibaba.druid.pool.DruidDataSource
     #   \u6570\u636E\u6E90\u5176\u4ED6\u914D\u7F6E
     initialSize: 5

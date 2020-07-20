@@ -16,8 +16,6 @@ public class HelloController {
     @RequestMapping("/hello")
     public User hello() {
         User user = new User();
-        user.setName("张鑫龙");
-        user.setAge(22);
         return user;
     }
 }
