@@ -69,11 +69,12 @@ public class UserApi {
     /**
      * 更新密码
      *
-     * @param user 用户
+     * @param user   用户
+     * @param userId 用户id
      * @return {@link ResponseResult}
      */
-    @PutMapping("/password")
-    public ResponseResult updatePassword(@RequestBody User user) {
+    @PutMapping("/password/{userId}")
+    public ResponseResult updatePassword(@PathVariable("userId") String userId,@RequestBody User user) {
         return ResponseResult.success(null);
     }
 
@@ -91,11 +92,12 @@ public class UserApi {
     /**
      * 更新用户信息
      *
-     * @param user 用户
+     * @param user   用户
+     * @param userId 用户id
      * @return {@link ResponseResult}
      */
-    @PutMapping
-    public ResponseResult updateUserInfo(@RequestBody User user) {
+    @PutMapping("/{userId}")
+    public ResponseResult updateUserInfo(@PathVariable("userId") String userId,@RequestBody User user) {
         return ResponseResult.success(null);
     }
 }
