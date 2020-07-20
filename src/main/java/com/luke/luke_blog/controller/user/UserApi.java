@@ -100,4 +100,27 @@ public class UserApi {
     public ResponseResult updateUserInfo(@PathVariable("userId") String userId,@RequestBody User user) {
         return ResponseResult.success(null);
     }
+
+    /**
+     * 用户列表
+     *
+     * @param page 页面
+     * @param size 大小
+     * @return {@link ResponseResult}
+     */
+    @GetMapping("/list")
+    public ResponseResult listUsers(@RequestParam("page") int page,@RequestParam("size") int size) {
+        return ResponseResult.success(null);
+    }
+
+    /**
+     * 删除用户
+     *
+     * @param userId 用户id
+     * @return {@link ResponseResult}
+     */
+    @DeleteMapping("/{userId}")
+    public ResponseResult deleteUser(@PathVariable("userId") String userId) {
+        return ResponseResult.success(null);
+    }
 }
