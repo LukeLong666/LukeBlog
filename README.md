@@ -138,7 +138,6 @@
   * 文章article
     * 获取文章列表
     * 根据分类获取内容category
-    * 获取分类categories
     * 获取文章详情
     * 获取推荐文章
   * 评论comment
@@ -146,6 +145,7 @@
     * 删除评论
     * 获取评论列表
   * 网站web-size
+    * 获取分类categories
     * 获取网站标题title
     * 获取访问量数据view-count
     * 获取网站seo信息seo

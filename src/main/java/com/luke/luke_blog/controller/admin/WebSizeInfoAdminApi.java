@@ -45,7 +45,7 @@ public class WebSizeInfoAdminApi {
     }
 
     @PutMapping("/seo")
-    public ResponseResult putSeoInfo(@RequestParam("keywords") String keywords,@RequestParam("description") String description) {
+    public ResponseResult putSeoInfo(@RequestParam("keywords") String keywords, @RequestParam("description") String description) {
         return ResponseResult.success(null);
     }
 

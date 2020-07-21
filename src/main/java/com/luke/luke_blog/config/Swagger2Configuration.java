@@ -65,7 +65,7 @@ public class Swagger2Configuration {
     private ApiInfo adminApiInfo() {
         return new ApiInfoBuilder()
                 //设置文档的标题
-                .title("阳光沙滩管理中心接口文档")
+                .title("Luke博客系统管理中心接口文档")
                 // 设置文档的描述
                 .description("管理中心接口")
                 // 设置文档的版本信息-> 1.0.0 Version information
