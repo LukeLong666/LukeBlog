@@ -2,11 +2,24 @@ package com.luke.luke_blog.controller.user;
 
 import com.luke.luke_blog.pojo.User;
 import com.luke.luke_blog.response.ResponseResult;
+import com.luke.luke_blog.service.IUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * 用户api
+ *
+ * @author zhang
+ * @date 2020/07/21
+ */
 @RestController
 @RequestMapping("/user")
 public class UserApi {
+
+    @Autowired
+    private IUserService userService;
 
     /**
      * 初始化管理员账号
@@ -14,9 +27,8 @@ public class UserApi {
      * @return {@link ResponseResult}
      */
     @PostMapping("/admin_account")
-    public ResponseResult initManagerAccount(@RequestBody User user) {
-        System.out.println(user);
-        return ResponseResult.success(null);
+    public ResponseResult initManagerAccount(@RequestBody User user, HttpServletRequest request) {
+        return userService.initManagerAccount(user,request);
     }
 
     /**

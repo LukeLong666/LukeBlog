@@ -8,7 +8,7 @@ import java.util.Date;
  * @author zhang
  * @date 2020/07/20
  */
-public class Settings {
+public class Setting {
 
     private String id;
     private String key;
