@@ -6,7 +6,10 @@ import com.luke.luke_blog.pojo.Setting;
 import com.luke.luke_blog.pojo.User;
 import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.IUserService;
-import com.luke.luke_blog.utils.*;
+import com.luke.luke_blog.utils.Constants;
+import com.luke.luke_blog.utils.IdWorker;
+import com.luke.luke_blog.utils.RedisUtil;
+import com.luke.luke_blog.utils.TextUtils;
 import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -155,13 +158,27 @@ public class UserServiceImpl implements IUserService {
 
     /**
      * 发送电子邮件验证码
-     *
+     * type:(register,forget,update)
      * @param request      请求
      * @param emailAddress 电子邮件地址
      * @return {@link ResponseResult}
      */
     @Override
-    public ResponseResult sendEmail(HttpServletRequest request, String emailAddress){
+    public ResponseResult sendEmail(String type,HttpServletRequest request, String emailAddress){
+        if (emailAddress == null) {
+            return ResponseResult.failure("邮箱地址不可以为空");
+        }
+        User userByEmail = userDao.findOneByEmail(emailAddress);
+        //根据功能类型查询邮箱是否存在
+        if ("register".equals(type)||"update".equals(type)) {
+            if (userByEmail != null) {
+                return ResponseResult.failure("改邮箱已被注册");
+            }
+        }else if("forget".equals(type)){
+            if (userByEmail == null) {
+                return ResponseResult.failure("改邮箱并未注册");
+            }
+        }
         //防止暴力发送,同一个邮箱,间隔不得低于30s,同一个ip,最多只能10次
         String remoteAddr = request.getRemoteAddr();
         if (remoteAddr != null) {
@@ -205,5 +222,81 @@ public class UserServiceImpl implements IUserService {
         //保存code
         redisUtil.set(Constants.User.KEY_EMAIL_CODE_CONTENT+emailAddress, String.valueOf(code), 60 * 10);
         return ResponseResult.success("发送成功",null);
+    }
+
+    /**
+     * 注册
+     *
+     * @param user 用户
+     * @return {@link ResponseResult}
+     */
+    @Override
+    public ResponseResult register(User user,String emailCode,String captchaCode, String captchaKey,HttpServletRequest request) {
+        String userName = user.getUserName();
+        if (TextUtils.isEmpty(userName)) {
+            return ResponseResult.failure("用户名不可以为空!");
+        }
+        //检查当前用户名是否已经注册
+        User userFromDbByUserName = userDao.findOneByUserName(userName);
+        if (userFromDbByUserName != null) {
+            return ResponseResult.failure("该用户名已注册!");
+        }
+        //检查邮箱格式是否正确
+        String email = user.getEmail();
+        if (TextUtils.isEmpty(email)) {
+            return ResponseResult.failure("邮箱不可以为空!");
+        }
+        if (!TextUtils.isEmailAddress(email)) {
+            return ResponseResult.failure("邮箱地址格式不正确!");
+        }
+        //检查邮箱是否已经注册
+        User userFromDbByEmail = userDao.findOneByEmail(email);
+        if (userFromDbByEmail != null) {
+            return ResponseResult.failure("该邮箱已被注册!");
+        }
+        //检查邮箱验证码是否正确
+        String emailVerifyCode = (String) redisUtil.get(Constants.User.KEY_EMAIL_CODE_CONTENT + email);
+        if (TextUtils.isEmpty(emailVerifyCode)) {
+            return ResponseResult.failure("邮箱验证码无效!");
+        }
+        if(TextUtils.isEmpty(emailCode)){
+            return ResponseResult.failure("请输入邮箱验证码!");
+        }
+        if (!emailVerifyCode.equals(emailCode)) {
+            return ResponseResult.failure("邮箱验证码错误!");
+        }else {
+            //清楚redis数据
+            redisUtil.del(Constants.User.KEY_EMAIL_CODE_CONTENT + email);
+        }
+        //检查图灵验证码是否正确
+        Long key = Long.parseLong(captchaKey);
+        String captchaVerifyCode = (String) redisUtil.get(Constants.User.KEY_CAPTCHA_CONTENT + key);
+        if (TextUtils.isEmpty(captchaVerifyCode)) {
+            return ResponseResult.failure("人类验证码无效!");
+        }
+        if (!captchaVerifyCode.equals(captchaCode)) {
+            return ResponseResult.failure("图灵验证码错误!");
+        }else {
+            //清楚redis数据
+            redisUtil.del(Constants.User.KEY_CAPTCHA_CONTENT + key);
+        }
+        //密码加密
+        String password = user.getPassword();
+        if (TextUtils.isEmpty(password)) {
+            return ResponseResult.failure("密码不能为空!");
+        }
+        user.setPassword(passwordEncoder.encode(password));
+        //补全数据
+        String remoteAddr = request.getRemoteAddr();
+        user.setRegIp(remoteAddr);
+        user.setLoginIp(remoteAddr);
+        user.setUpdateTime(new Date());
+        user.setCreateTime(new Date());
+        user.setAvatar(Constants.User.DEFAULT_AVATAR);
+        user.setRoles(Constants.User.ROLES_NORMAL);
+        //保存到数据库
+        userDao.sava(user);
+        //返回结果
+        return ResponseResult.success(20002,"注册成功", null);
     }
 }

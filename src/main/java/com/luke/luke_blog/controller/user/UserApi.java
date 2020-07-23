@@ -49,6 +49,20 @@ public class UserApi {
     }
 
     /**
+     * 发送验证代码
+     *
+     * @param emailAddress 电子邮件地址
+     * @return {@link ResponseResult}
+     */
+    @GetMapping("/verify_code")
+    public ResponseResult sendVerifyCode(HttpServletRequest request,
+                                         @RequestParam("type") String type,
+                                         @RequestParam("email") String emailAddress) {
+        System.out.println(emailAddress);
+        return userService.sendEmail(type,request,emailAddress);
+    }
+
+    /**
      * 注册
      *
      * @param user 用户
@@ -56,17 +70,12 @@ public class UserApi {
      */
     // TODO: 2020/7/23 注册
     @PostMapping
-    public ResponseResult register(@RequestBody User user) {
-        //检查当前用户名是否已经注册
-        //检查邮箱格式是否正确
-        //检查邮箱是否已经注册
-        //检查邮箱验证码是否正确
-        //检查图灵验证码是否正确
-        //密码加密
-        //补全数据
-        //保存到数据库
-        //返回结果
-        return ResponseResult.success(null);
+    public ResponseResult register(@RequestBody User user,
+                                   @RequestParam("email_code") String emailCode,
+                                   @RequestParam("captcha_code") String captchaCode,
+                                   @RequestParam("captcha_key") String captchaKey,
+                                   HttpServletRequest request) {
+        return userService.register(user,emailCode,captchaCode,captchaKey,request);
     }
 
     /**
@@ -83,17 +92,7 @@ public class UserApi {
     }
 
 
-    /**
-     * 发送验证代码
-     *
-     * @param emailAddress 电子邮件地址
-     * @return {@link ResponseResult}
-     */
-    @GetMapping("/verify_code")
-    public ResponseResult sendVerifyCode(HttpServletRequest request,@RequestParam("email") String emailAddress) {
-        System.out.println(emailAddress);
-        return userService.sendEmail(request,emailAddress);
-    }
+
 
 
     /**

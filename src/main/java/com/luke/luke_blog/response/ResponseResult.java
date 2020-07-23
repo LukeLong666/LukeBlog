@@ -9,6 +9,12 @@ package com.luke.luke_blog.response;
 public class ResponseResult {
 
     private Boolean success;
+
+    //操作结果码
+    //错误 0
+    //成功 20000
+    //登陆成功 20001
+    //注册成功 20002
     private Integer code;
     private String message;
     private Object data;

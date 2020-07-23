@@ -37,7 +37,16 @@ public interface IUserService {
      *
      * @param request      请求
      * @param emailAddress 电子邮件地址
+     * @param type         类型
      * @return {@link ResponseResult}
      */
-    ResponseResult sendEmail(HttpServletRequest request, String emailAddress);
+    ResponseResult sendEmail(String type,HttpServletRequest request, String emailAddress);
+
+    /**
+     * 注册
+     *
+     * @param user 用户
+     * @return {@link ResponseResult}
+     */
+    ResponseResult register(User user,String emailCode,String captchaCode, String captchaKey,HttpServletRequest request);
 }

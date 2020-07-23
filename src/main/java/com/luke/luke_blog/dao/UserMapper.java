@@ -3,6 +3,7 @@ package com.luke.luke_blog.dao;
 import com.luke.luke_blog.pojo.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * 用户映射器
@@ -25,4 +26,24 @@ public interface UserMapper {
             "values(#{id},#{userName},#{password},#{roles},#{avatar},#{email},#{sign},#{state},#{regIp},#{loginIp}," +
             "#{createTime},#{updateTime})")
     int sava(User user);
+
+
+    /**
+     * 根据用户名查找用户
+     *
+     * @param userName 用户名
+     * @return {@link User}
+     */
+    @Select("select * from tb_user where user_name=#{userName}")
+    User findOneByUserName(String userName);
+
+
+    /**
+     * 根据邮箱地址找用户
+     *
+     * @param emailAddress 邮箱地址
+     * @return {@link User}
+     */
+    @Select("select * from tb_user where email=#{emailAddress}")
+    User findOneByEmail(String emailAddress);
 }
