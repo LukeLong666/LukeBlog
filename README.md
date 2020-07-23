@@ -84,7 +84,7 @@
 
   ## API接口设计
 
-  * 用户user
+  ### 用户user
     * 初始化管理员账号-init-admin
     * 注册join-in
     * 登录sign-up
@@ -96,7 +96,7 @@
     * 获取用户列表
     * 删除用户
     * 重置用户密码
-  * 管理admin
+  ### 管理admin
     * 分类category
       * 添加分类
       * 删除分类
@@ -134,7 +134,7 @@
       * 获取评论列表
       * 获取评论
       * 删除评论
-* 门户portal
+### 门户portal
   * 文章article
     * 获取文章列表
     * 根据分类获取内容category
@@ -152,4 +152,53 @@
     * 获取轮播图列表looper-list
     * 获取友情链接列表links
   * 文章搜索search
+
+## 功能实现
+
+### 用户注册流程
+
+#### [图灵验证码](https://github.com/whvcse/EasyCaptcha)
+
+   ```java
+   @RequestMapping("/captcha")
+       public void captcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+           // 设置请求头为输出图片类型
+           response.setContentType("image/gif");
+           response.setHeader("Pragma", "No-cache");
+           response.setHeader("Cache-Control", "no-cache");
+           response.setDateHeader("Expires", 0);
+   
+           // 三个参数分别为宽、高、位数
+           SpecCaptcha specCaptcha = new SpecCaptcha(130, 48, 5);
+           // 设置字体
+           specCaptcha.setFont(new Font("Verdana", Font.PLAIN, 32));
+           // 有默认字体，可以不用设置
+           // 设置类型，纯数字、纯字母、字母数字混合
+           specCaptcha.setCharType(Captcha.TYPE_ONLY_NUMBER);
+   
+           // 验证码存入session
+           request.getSession().setAttribute("captcha", specCaptcha.text().toLowerCase());
+   
+           // 输出图片流
+           specCaptcha.out(response.getOutputStream());
+       }
+   ```
+
+   ##### 图灵验证码的使用
+
+   * 前端请求图灵验证码
+   * 后台生成图灵验证码,并且保存在session里
+   * 用户提交注册
+   * 从session中拿出存储的验证码内容跟用户提交的比对
+   * 返回结果
+
+   ##### 前后端分离
+
+   * 前端生成随机数以参数的形式添加到图灵验证码的url上
+   * 后台生成验证码,返回结果,并且保存再redis里key-value,并设置有效期
+   * 用户提交注册信息
+   * 根据key从redis里拿出内容,与用户提交的比对
+   * 如果正确,删除redis记录,如果不正确返回前端
+
+#### [邮箱验证]()
 

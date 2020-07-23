@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * 用户api
@@ -32,14 +34,38 @@ public class UserApi {
     }
 
     /**
+     * 获取图灵验证码
+     *
+     * @return {@link ResponseResult}
+     */
+    @GetMapping("/captcha")
+    public void getCaptcha(HttpServletResponse response,@RequestParam("captcha_key") String captchaKey) throws IOException {
+        try{
+            userService.createCaptcha(response,captchaKey);
+        }catch (Exception e){
+            System.out.println(e.toString());
+        }
+
+    }
+
+    /**
      * 注册
      *
      * @param user 用户
      * @return {@link ResponseResult}
      */
-    @PostMapping("/")
+    // TODO: 2020/7/23 注册
+    @PostMapping
     public ResponseResult register(@RequestBody User user) {
-
+        //检查当前用户名是否已经注册
+        //检查邮箱格式是否正确
+        //检查邮箱是否已经注册
+        //检查邮箱验证码是否正确
+        //检查图灵验证码是否正确
+        //密码加密
+        //补全数据
+        //保存到数据库
+        //返回结果
         return ResponseResult.success(null);
     }
 
@@ -50,21 +76,12 @@ public class UserApi {
      * @param user    登录用户
      * @return {@link ResponseResult}
      */
+    // TODO: 2020/7/23 登录
     @PostMapping("/{captcha}")
     public ResponseResult login(@PathVariable("captcha") String captcha,@RequestBody User user) {
-
         return ResponseResult.success(null);
     }
 
-    /**
-     * 获取图灵验证码
-     *
-     * @return {@link ResponseResult}
-     */
-    @GetMapping("/captcha")
-    public ResponseResult getCaptcha() {
-        return ResponseResult.success(null);
-    }
 
     /**
      * 发送验证代码
@@ -73,8 +90,9 @@ public class UserApi {
      * @return {@link ResponseResult}
      */
     @GetMapping("/verify_code")
-    public ResponseResult sendVerifyCode(@RequestParam("email") String emailAddress) {
-        return ResponseResult.success(emailAddress);
+    public ResponseResult sendVerifyCode(HttpServletRequest request,@RequestParam("email") String emailAddress) {
+        System.out.println(emailAddress);
+        return userService.sendEmail(request,emailAddress);
     }
 
 
