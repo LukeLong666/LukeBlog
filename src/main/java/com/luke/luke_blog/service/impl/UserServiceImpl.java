@@ -288,6 +288,9 @@ public class UserServiceImpl implements IUserService {
         user.setPassword(passwordEncoder.encode(password));
         //补全数据
         String remoteAddr = request.getRemoteAddr();
+        String userId = String.valueOf(idWorker.nextId());
+        user.setId(userId);
+        user.setState("1");
         user.setRegIp(remoteAddr);
         user.setLoginIp(remoteAddr);
         user.setUpdateTime(new Date());
