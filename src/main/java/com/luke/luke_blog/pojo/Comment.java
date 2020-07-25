@@ -17,7 +17,7 @@ public class Comment {
     private String userId;
     private String userAvatar;
     private String userName;
-    private String state;
+    private String state="1";
     private Date createTime;
     private Date updateTime;
 

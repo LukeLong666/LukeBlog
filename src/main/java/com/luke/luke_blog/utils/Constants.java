@@ -10,7 +10,7 @@ public interface Constants {
 
     int DEFAULT_SIZE = 30;
 
-    interface User{
+    interface User {
         String KEY_CAPTCHA_CONTENT = "key_captcha_content_";
         String KEY_EMAIL_CODE_CONTENT = "key_email_code_content_";
         String ROLES_ADMIN = "role_admin";
@@ -19,9 +19,21 @@ public interface Constants {
         String DEFAULT_STATE = "1";
         String KEY_EMAIL_SEND_ADDRESS = "key_email_send_address_";
         String KEY_EMAIL_SEND_IP = "key_email_send_ip_";
+        String KEY_TOKEN = "key_token_";
+        String COOKIE_TOKEN_KEY = "blog_token";
     }
 
-    interface Settings{
+    interface Settings {
         String MANAGER_ACCOUNT_INIT_STATE = "manager_account_init_state";
+    }
+
+    interface TimeValue {
+        long HOUR_2 = 2 * 60 * 60 * 1000;
+
+        int MIN = 60;
+        int HOUR = 60 * MIN;
+        int DAY = 24 * HOUR;
+        int WEEK = 7 * DAY;
+        int MONTH = 30 * DAY;
     }
 }

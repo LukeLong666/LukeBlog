@@ -46,4 +46,13 @@ public interface UserMapper {
      */
     @Select("select * from tb_user where email=#{emailAddress}")
     User findOneByEmail(String emailAddress);
+
+    /**
+     * 找到一个通过id
+     *
+     * @param id id
+     * @return {@link User}
+     */
+    @Select("select * from tb_user where id = #{id}")
+    User findOneById(String id);
 }

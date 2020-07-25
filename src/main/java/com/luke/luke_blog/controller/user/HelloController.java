@@ -1,10 +1,14 @@
-package com.luke.luke_blog.controller;
+package com.luke.luke_blog.controller.user;
 
+import com.luke.luke_blog.dao.CommentMapper;
 import com.luke.luke_blog.dao.LabelMapper;
+import com.luke.luke_blog.pojo.Comment;
 import com.luke.luke_blog.pojo.Label;
 import com.luke.luke_blog.pojo.User;
 import com.luke.luke_blog.response.ResponseResult;
+import com.luke.luke_blog.service.IUserService;
 import com.luke.luke_blog.utils.Constants;
+import com.luke.luke_blog.utils.CookieUtils;
 import com.luke.luke_blog.utils.IdWorker;
 import com.luke.luke_blog.utils.RedisUtil;
 import com.wf.captcha.SpecCaptcha;
@@ -38,6 +42,9 @@ public class HelloController {
     @Resource
     LabelMapper labelDao;
 
+    @Resource
+    CommentMapper commentDao;
+
     public static final Logger log = LoggerFactory.getLogger(HelloController.class);
 
     @RequestMapping("/hello")
@@ -46,7 +53,7 @@ public class HelloController {
         user.setUserName("张鑫龙");
         String string = (String) redisUtil.get(Constants.User.KEY_CAPTCHA_CONTENT + "123456");
         log.info("haha");
-        return ResponseResult.success("哈哈",string);
+        return ResponseResult.success("哈哈", string);
     }
 
     @PostMapping("/label")
@@ -55,7 +62,7 @@ public class HelloController {
         label.setCreateTime(new Date());
         label.setUpdateTime(new Date());
         int result = labelDao.save(label);
-        return result!=0?ResponseResult.success("添加成功", null):ResponseResult.success("添加失败", null);
+        return result != 0 ? ResponseResult.success("添加成功", null) : ResponseResult.success("添加失败", null);
     }
 
     @Autowired
@@ -87,5 +94,32 @@ public class HelloController {
 
         // 输出图片流
         specCaptcha.out(response.getOutputStream());
+    }
+
+    @Resource
+    private IUserService userService;
+
+    @PostMapping("/comment")
+    public ResponseResult testComment(@RequestBody Comment comment,HttpServletRequest request,HttpServletResponse response) {
+        String content = comment.getContent();
+        String tokenKey = CookieUtils.getCookie(request, Constants.User.COOKIE_TOKEN_KEY);
+        log.info("comment tokenKey == > "+tokenKey);
+        if (tokenKey == null) {
+            return ResponseResult.failure("账号未登录");
+        }
+        User user = userService.checkUser(request, response);
+        // TODO: 2020/7/25
+        if (user == null) {
+            return ResponseResult.failure("账号未登录");
+        }
+        comment.setUserId(user.getId());
+        comment.setUserAvatar(user.getAvatar());
+        comment.setUserName(user.getUserName());
+        comment.setCreateTime(new Date());
+        comment.setUpdateTime(new Date());
+        comment.setState("1");
+        comment.setId(String.valueOf(idWorker.nextId()));
+        commentDao.save(comment);
+        return ResponseResult.success("评论成功", null);
     }
 }

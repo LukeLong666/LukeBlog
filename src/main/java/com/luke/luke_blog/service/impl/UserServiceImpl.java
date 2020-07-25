@@ -1,20 +1,23 @@
 package com.luke.luke_blog.service.impl;
 
+import com.luke.luke_blog.dao.RefreshTokenMapper;
 import com.luke.luke_blog.dao.SettingsMapper;
 import com.luke.luke_blog.dao.UserMapper;
+import com.luke.luke_blog.pojo.RefreshToken;
 import com.luke.luke_blog.pojo.Setting;
 import com.luke.luke_blog.pojo.User;
 import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.IUserService;
-import com.luke.luke_blog.utils.Constants;
-import com.luke.luke_blog.utils.IdWorker;
-import com.luke.luke_blog.utils.RedisUtil;
-import com.luke.luke_blog.utils.TextUtils;
+import com.luke.luke_blog.utils.*;
 import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
+import io.jsonwebtoken.Claims;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -34,6 +38,8 @@ import java.util.Random;
 @Transactional
 public class UserServiceImpl implements IUserService {
 
+    private Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
+
     @Resource
     private IdWorker idWorker;
 
@@ -42,6 +48,9 @@ public class UserServiceImpl implements IUserService {
 
     @Resource
     private SettingsMapper settingsDao;
+
+    @Resource
+    private RefreshTokenMapper refreshTokenDao;
 
     @Resource
     private BCryptPasswordEncoder passwordEncoder;
@@ -67,9 +76,10 @@ public class UserServiceImpl implements IUserService {
     public ResponseResult initManagerAccount(User user, HttpServletRequest request) {
         //检查是否有初始化
         Setting managerAccountState = settingsDao.findOneByKey(Constants.Settings.MANAGER_ACCOUNT_INIT_STATE);
-        if (managerAccountState!=null) {
+        if (managerAccountState != null) {
             return ResponseResult.failure("已经初始化过了");
         }
+
         //检查数据
         if (TextUtils.isEmpty(user.getUserName())) {
             return ResponseResult.failure("用户名不能为空");
@@ -98,7 +108,7 @@ public class UserServiceImpl implements IUserService {
         user.setPassword(encodedPassword);
         //保存到数据库
         int result1 = userDao.sava(user);
-        if (result1==0) {
+        if (result1 == 0) {
             return ResponseResult.failure("添加失败!");
         }
         //更细已经添加的标记
@@ -110,10 +120,10 @@ public class UserServiceImpl implements IUserService {
         setting.setKey(Constants.Settings.MANAGER_ACCOUNT_INIT_STATE);
         setting.setValue("1");
         int result2 = settingsDao.sava(setting);
-        if (result2==0) {
+        if (result2 == 0) {
             return ResponseResult.failure("添加失败!");
         }
-        return ResponseResult.success("添加成功",null);
+        return ResponseResult.success("添加成功", null);
     }
 
     /**
@@ -125,7 +135,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public void createCaptcha(HttpServletResponse response, String captchaKey) throws IOException {
-        if (TextUtils.isEmpty(captchaKey)||captchaKey.length()<13) {
+        if (TextUtils.isEmpty(captchaKey) || captchaKey.length() < 13) {
             return;
         }
         long key = 0L;
@@ -159,22 +169,23 @@ public class UserServiceImpl implements IUserService {
     /**
      * 发送电子邮件验证码
      * type:(register,forget,update)
+     *
      * @param request      请求
      * @param emailAddress 电子邮件地址
      * @return {@link ResponseResult}
      */
     @Override
-    public ResponseResult sendEmail(String type,HttpServletRequest request, String emailAddress){
+    public ResponseResult sendEmail(String type, HttpServletRequest request, String emailAddress) {
         if (emailAddress == null) {
             return ResponseResult.failure("邮箱地址不可以为空");
         }
         User userByEmail = userDao.findOneByEmail(emailAddress);
         //根据功能类型查询邮箱是否存在
-        if ("register".equals(type)||"update".equals(type)) {
+        if ("register".equals(type) || "update".equals(type)) {
             if (userByEmail != null) {
                 return ResponseResult.failure("改邮箱已被注册");
             }
-        }else if("forget".equals(type)){
+        } else if ("forget".equals(type)) {
             if (userByEmail == null) {
                 return ResponseResult.failure("改邮箱并未注册");
             }
@@ -184,10 +195,10 @@ public class UserServiceImpl implements IUserService {
         if (remoteAddr != null) {
             remoteAddr = remoteAddr.replaceAll(":", "_");
         }
-        System.out.println(remoteAddr);
+        log.info("remoteAddress--->:" + remoteAddr);
         //频率判断
-        Integer ipSendTime = (Integer)redisUtil.get(Constants.User.KEY_EMAIL_SEND_IP + remoteAddr);
-        if ( ipSendTime!= null&&ipSendTime>10) {
+        Integer ipSendTime = (Integer) redisUtil.get(Constants.User.KEY_EMAIL_SEND_IP + remoteAddr);
+        if (ipSendTime != null && ipSendTime > 10) {
             return ResponseResult.failure("您发送验证码也太频繁了");
         }
         Object addressSendTime = redisUtil.get(Constants.User.KEY_EMAIL_SEND_ADDRESS + emailAddress);
@@ -201,8 +212,8 @@ public class UserServiceImpl implements IUserService {
             return ResponseResult.failure("邮箱地址格式不正确");
         }
         int code = random.nextInt(999999);
-        if (code<100000) {
-            code+=100000;
+        if (code < 100000) {
+            code += 100000;
         }
         //发送验证码,验证码范围6位数100000-999999
         try {
@@ -214,14 +225,14 @@ public class UserServiceImpl implements IUserService {
 
         //记录发送记录和code
         if (ipSendTime == null) {
-            ipSendTime=0;
+            ipSendTime = 0;
         }
         ipSendTime++;
-        redisUtil.set(Constants.User.KEY_EMAIL_SEND_IP + remoteAddr, ipSendTime,60*60);
+        redisUtil.set(Constants.User.KEY_EMAIL_SEND_IP + remoteAddr, ipSendTime, 60 * 60);
         redisUtil.set(Constants.User.KEY_EMAIL_SEND_ADDRESS + emailAddress, "true", 30);
         //保存code
-        redisUtil.set(Constants.User.KEY_EMAIL_CODE_CONTENT+emailAddress, String.valueOf(code), 60 * 10);
-        return ResponseResult.success("发送成功",null);
+        redisUtil.set(Constants.User.KEY_EMAIL_CODE_CONTENT + emailAddress, String.valueOf(code), 60 * 10);
+        return ResponseResult.success("发送成功", null);
     }
 
     /**
@@ -231,7 +242,7 @@ public class UserServiceImpl implements IUserService {
      * @return {@link ResponseResult}
      */
     @Override
-    public ResponseResult register(User user,String emailCode,String captchaCode, String captchaKey,HttpServletRequest request) {
+    public ResponseResult register(User user, String emailCode, String captchaCode, String captchaKey, HttpServletRequest request) {
         String userName = user.getUserName();
         if (TextUtils.isEmpty(userName)) {
             return ResponseResult.failure("用户名不可以为空!");
@@ -259,12 +270,12 @@ public class UserServiceImpl implements IUserService {
         if (TextUtils.isEmpty(emailVerifyCode)) {
             return ResponseResult.failure("邮箱验证码无效!");
         }
-        if(TextUtils.isEmpty(emailCode)){
+        if (TextUtils.isEmpty(emailCode)) {
             return ResponseResult.failure("请输入邮箱验证码!");
         }
         if (!emailVerifyCode.equals(emailCode)) {
             return ResponseResult.failure("邮箱验证码错误!");
-        }else {
+        } else {
             //清楚redis数据
             redisUtil.del(Constants.User.KEY_EMAIL_CODE_CONTENT + email);
         }
@@ -276,7 +287,7 @@ public class UserServiceImpl implements IUserService {
         }
         if (!captchaVerifyCode.equals(captchaCode)) {
             return ResponseResult.failure("图灵验证码错误!");
-        }else {
+        } else {
             //清楚redis数据
             redisUtil.del(Constants.User.KEY_CAPTCHA_CONTENT + key);
         }
@@ -300,6 +311,164 @@ public class UserServiceImpl implements IUserService {
         //保存到数据库
         userDao.sava(user);
         //返回结果
-        return ResponseResult.success(20002,"注册成功", null);
+        return ResponseResult.success(20002, "注册成功", null);
+    }
+
+    /**
+     * 登录
+     *
+     * @param captcha    验证码
+     * @param captchaKey 验证码的关键
+     * @param user       用户
+     * @param request    请求
+     * @param response   响应
+     * @return {@link ResponseResult}
+     */
+    @Override
+    public ResponseResult doLogin(String captcha, String captchaKey, User user, HttpServletRequest request, HttpServletResponse response) {
+        //验证码
+        String captchaFromRedis = (String) redisUtil.get(Constants.User.KEY_CAPTCHA_CONTENT + captchaKey);
+        log.info("Redis captcha ===> " + captchaFromRedis);
+        if (!captcha.equals(captchaFromRedis)) {
+            log.info("人类验证码失败");
+            return ResponseResult.failure("人类验证码失败");
+        }
+        String account = user.getUserName();
+        if (TextUtils.isEmpty(account)) {
+            return ResponseResult.failure("请输入用户账号");
+        }
+        String password = user.getPassword();
+        if (TextUtils.isEmpty(password)) {
+            return ResponseResult.failure("请输入用户密码");
+        }
+        //用户是否存在
+        User userFromDB = userDao.findOneByUserName(account);
+        if (userFromDB == null) {
+            userFromDB = userDao.findOneByEmail(account);
+        }
+        if (userFromDB == null) {
+            return ResponseResult.failure("用户名或密码错误");
+        }
+        //匹配密码
+        boolean matches = passwordEncoder.matches(password, userFromDB.getPassword());
+        log.info("password matches result ===> " + matches);
+        if (!matches) {
+            return ResponseResult.failure("用户名或密码错误");
+        }
+        //密码正确
+        //判断用户状态
+        if (!"1".equals(userFromDB.getState())) {
+            return ResponseResult.failure("该账号已被封禁");
+        }
+        createToken(response, userFromDB);
+        //清楚redis人类验证码
+        redisUtil.del(Constants.User.KEY_CAPTCHA_CONTENT + captchaKey);
+        log.info("人类验证码已从redis内清除");
+        return ResponseResult.success(20001, "登陆成功", null);
+    }
+
+    /**
+     * 创建令牌
+     *
+     * @param response   响应
+     * @param userFromDB 用户数据库
+     * @return {@link String}
+     */
+    private String createToken(HttpServletResponse response, User userFromDB) {
+        refreshTokenDao.deleteByUserId(userFromDB.getId());
+        log.info("createToken()");
+        //生成token
+        Map<String, Object> claims = ClaimsUtils.user2Claims(userFromDB);
+        //默认有效两个小时
+        String token = JwtUtil.createToken(claims);
+        log.info("token ==>>"+ token);
+        //返回token的md5值,token会保存在redis里
+        //前端访问携带MD5key,从redis中获取即可
+        String tokenKey = DigestUtils.md5DigestAsHex(token.getBytes());
+        log.info("tokenKey ==>>"+ tokenKey);
+        //保存token到redis,有效期为2个小时,key是tokenKey
+        redisUtil.set(Constants.User.KEY_TOKEN + tokenKey, token, Constants.TimeValue.HOUR * 2);
+        //把tokenKey写道cookies里
+        CookieUtils.setUpCookie(response, Constants.User.COOKIE_TOKEN_KEY, tokenKey);
+        //这个要动态获取,可以从request获取
+        //生成refreshToken(一个月)
+        String refreshTokenValue = JwtUtil.createRefreshToken(userFromDB.getId(), Constants.TimeValue.MONTH);
+        //保存到数据库里面
+        //refreshToken tokenKey 用户ID 创建时间 更新时间
+        RefreshToken refreshToken = new RefreshToken();
+        refreshToken.setId(idWorker.nextId() + "");
+        refreshToken.setRefreshToken(refreshTokenValue);
+        refreshToken.setUserId(userFromDB.getId());
+        refreshToken.setTokenKey(tokenKey);
+        refreshToken.setCreateTime(new Date());
+        refreshToken.setUpdateTime(new Date());
+        //保存
+        refreshTokenDao.save(refreshToken);
+        log.info("refresh token 已保存在数据库");
+        return tokenKey;
+    }
+
+    /**
+     * 检查用户是否有登录
+     * 如果登录,返回用户信息
+     *
+     * @param request  请求
+     * @param response 响应
+     * @return {@link User}
+     */
+    @Override
+    public User checkUser(HttpServletRequest request, HttpServletResponse response) {
+        log.info("checkUser()");
+        String tokenKey = CookieUtils.getCookie(request, Constants.User.COOKIE_TOKEN_KEY);
+        log.info("tokenKey ===>> "+tokenKey);
+        User user = parseByTokenKey(tokenKey);
+        if (user == null) {
+            log.info("user == null");
+            //根据refresh token判断
+            //解析过期
+            //去数据库查询refresh token
+            RefreshToken refreshToken = refreshTokenDao.findOneByTokenKey(tokenKey);
+            //如果不存在,就是没登陆
+            if (refreshToken == null) {
+                log.info("refreshToken == null");
+                return null;
+            }
+            //如果存在,就解析refresh token
+            try {
+                log.info("存在,就解析refresh token");
+                Claims claims = JwtUtil.parseJWT(refreshToken.getRefreshToken());
+                //如果有效,创建新的token和新的refresh token
+                String userId = refreshToken.getUserId();
+                User userFromDb = userDao.findOneById(userId);
+                //删除refreshToken记录
+                refreshTokenDao.deleteById(refreshToken.getId());
+                String newTokenKey = createToken(response, userFromDb);
+                return parseByTokenKey(newTokenKey);
+            } catch (Exception e1) {
+                //如果refresh token 过期了,就当前访问没有登录
+                log.error(e1.toString());
+                return null;
+            }
+        }
+        return user;
+    }
+
+    private User parseByTokenKey(String tokenKey) {
+        log.info("parseByTokenKey()  tokenKey == >" + tokenKey);
+        String token = (String) redisUtil.get(Constants.User.KEY_TOKEN+tokenKey);
+        if (token != null) {
+            log.info("token != null");
+            try {
+                Claims claims = JwtUtil.parseJWT(token);
+                User user = ClaimsUtils.claims2User(claims);
+                return user;
+            } catch (Exception e) {
+                log.error(e.toString());
+                return null;
+            }
+
+        }
+        log.info("token == null");
+        return null;
     }
 }

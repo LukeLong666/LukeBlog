@@ -68,7 +68,6 @@ public class UserApi {
      * @param user 用户
      * @return {@link ResponseResult}
      */
-    // TODO: 2020/7/23 注册
     @PostMapping
     public ResponseResult register(@RequestBody User user,
                                    @RequestParam("email_code") String emailCode,
@@ -80,20 +79,26 @@ public class UserApi {
 
     /**
      * 登录
+     * 需要提交的数据
+     * 1. 用户账号-用户名或者邮箱
+     * 2. 密码
+     * 3. 图灵验证码
+     * 4. 图灵验证码key
      *
-     * @param captcha 验证码
-     * @param user    登录用户
+     * @param captcha    验证码
+     * @param user       登录用户
+     * @param captchaKey 验证码的关键
      * @return {@link ResponseResult}
      */
     // TODO: 2020/7/23 登录
-    @PostMapping("/{captcha}")
-    public ResponseResult login(@PathVariable("captcha") String captcha,@RequestBody User user) {
-        return ResponseResult.success(null);
+    @PostMapping("/{captcha}/{captcha_key}")
+    public ResponseResult login(@PathVariable("captcha_key") String captchaKey,
+                                @PathVariable("captcha") String captcha,
+                                @RequestBody User user,
+                                HttpServletRequest request,
+                                HttpServletResponse response) {
+        return userService.doLogin(captcha,captchaKey,user,request,response);
     }
-
-
-
-
 
     /**
      * 更新密码
