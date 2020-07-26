@@ -3,6 +3,8 @@ package com.luke.luke_blog.controller.user;
 import com.luke.luke_blog.pojo.User;
 import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.IUserService;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -125,7 +127,13 @@ public class UserApi {
 
     /**
      * 更新用户信息
-     *
+     * 允许用户修改的内容
+     * 1.头像 ()
+     * 2.用户名 (唯一的)
+     * 3.密码 (单独修改) {@link UserApi#updatePassword(String, User)}
+     * 4.签名
+     * 5.email (唯一的,单独修改)
+     * @see
      * @param user   用户
      * @param userId 用户id
      * @return {@link ResponseResult}
@@ -156,5 +164,36 @@ public class UserApi {
     @DeleteMapping("/{userId}")
     public ResponseResult deleteUser(@PathVariable("userId") String userId) {
         return ResponseResult.success(null);
+    }
+
+
+    /**
+     * 检查电子邮件是否重复
+     *
+     * @param email 电子邮件
+     * @return {@link ResponseResult}
+     */
+    @ApiResponses({
+            @ApiResponse(code = 20000,message = "表示当前邮箱已经注册"),
+            @ApiResponse(code = 0,message = "表示当前邮箱没有注册")
+    })
+    @GetMapping("/email")
+    public ResponseResult checkEmail(@RequestParam("email") String email) {
+        return userService.checkEmail(email);
+    }
+
+    /**
+     * 检查用户名是否重复
+     *
+     * @param userName 用户名
+     * @return {@link ResponseResult}
+     */
+    @ApiResponses({
+            @ApiResponse(code = 20000,message = "表示当前用户名已经注册"),
+            @ApiResponse(code = 0,message = "表示当前用户名没有注册")
+    })
+    @GetMapping("/user_name")
+    public ResponseResult checkUserName(@RequestParam("user_name") String userName) {
+        return userService.checkUserName(userName);
     }
 }

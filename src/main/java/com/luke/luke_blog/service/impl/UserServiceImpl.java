@@ -506,4 +506,24 @@ public class UserServiceImpl implements IUserService {
         return ResponseResult.success("获取成功",newUser);
     }
 
+
+    @Override
+    public ResponseResult checkEmail(String email) {
+        User oneByEmail = userDao.findOneByEmail(email);
+        if (oneByEmail != null) {
+            return ResponseResult.success("当前邮箱已经注册",null);
+        }else{
+            return ResponseResult.failure("当前邮箱没有注册");
+        }
+    }
+
+    @Override
+    public ResponseResult checkUserName(String userName) {
+        User oneByUserName = userDao.findOneByUserName(userName);
+        if (oneByUserName != null) {
+            return ResponseResult.success("当前用户名已经注册",null);
+        }else{
+            return ResponseResult.failure("当前用户名没有注册");
+        }
+    }
 }

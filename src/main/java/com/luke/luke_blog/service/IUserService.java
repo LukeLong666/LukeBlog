@@ -76,4 +76,20 @@ public interface IUserService {
      * @return {@link ResponseResult}
      */
     ResponseResult getUserInfo(String userId);
+
+    /**
+     * 检查电子邮件是否重复
+     *
+     * @param email 电子邮件
+     * @return {@link ResponseResult}
+     */
+    ResponseResult checkEmail(String email);
+
+    /**
+     * 检查用户名是否重复
+     *
+     * @param userName 用户名
+     * @return {@link ResponseResult}
+     */
+    ResponseResult checkUserName(String userName);
 }
