@@ -68,4 +68,12 @@ public interface IUserService {
      * @return {@link User}
      */
     User checkUser(HttpServletRequest request,HttpServletResponse response);
+
+    /**
+     * 获取用户信息
+     *
+     * @param userId 用户id
+     * @return {@link ResponseResult}
+     */
+    ResponseResult getUserInfo(String userId);
 }

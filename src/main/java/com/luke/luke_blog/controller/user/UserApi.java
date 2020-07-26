@@ -120,7 +120,7 @@ public class UserApi {
      */
     @GetMapping("/{userId}")
     public ResponseResult getUserInfo(@PathVariable("userId") String userId) {
-        return ResponseResult.success(null);
+        return userService.getUserInfo(userId);
     }
 
     /**

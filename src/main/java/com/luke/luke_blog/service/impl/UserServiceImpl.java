@@ -1,5 +1,6 @@
 package com.luke.luke_blog.service.impl;
 
+import com.google.gson.Gson;
 import com.luke.luke_blog.dao.RefreshTokenMapper;
 import com.luke.luke_blog.dao.SettingsMapper;
 import com.luke.luke_blog.dao.UserMapper;
@@ -60,6 +61,9 @@ public class UserServiceImpl implements IUserService {
 
     @Resource
     Random random;
+
+    @Resource
+    private Gson gson;
 
     @Resource
     private TaskService taskService;
@@ -453,6 +457,12 @@ public class UserServiceImpl implements IUserService {
         return user;
     }
 
+    /**
+     * 解析由令牌密钥
+     *
+     * @param tokenKey 令牌的关键
+     * @return {@link User}
+     */
     private User parseByTokenKey(String tokenKey) {
         log.info("parseByTokenKey()  tokenKey == >" + tokenKey);
         String token = (String) redisUtil.get(Constants.User.KEY_TOKEN+tokenKey);
@@ -471,4 +481,29 @@ public class UserServiceImpl implements IUserService {
         log.info("token == null");
         return null;
     }
+
+    /**
+     * 获取用户信息
+     *
+     * @param userId 用户id
+     * @return {@link ResponseResult}
+     */
+    @Override
+    public ResponseResult getUserInfo(String userId) {
+        //从数据库获取
+        User user = userDao.findOneById(userId);
+        //如果不存在
+        if (user == null) {
+            return ResponseResult.failure("用户不存在");
+        }
+        //如果存在,复制对象,清空不必要信息
+        String userJson = gson.toJson(user);
+        User newUser = gson.fromJson(userJson, User.class);
+        newUser.setPassword("");
+        newUser.setEmail("");
+        newUser.setRegIp("");
+        newUser.setLoginIp("");
+        return ResponseResult.success("获取成功",newUser);
+    }
+
 }

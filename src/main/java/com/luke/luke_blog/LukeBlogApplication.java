@@ -1,5 +1,6 @@
 package com.luke.luke_blog;
 
+import com.google.gson.Gson;
 import com.luke.luke_blog.utils.IdWorker;
 import com.luke.luke_blog.utils.RedisUtil;
 import org.springframework.boot.SpringApplication;
@@ -42,6 +43,11 @@ public class LukeBlogApplication {
     @Bean
     public Random createRandom() {
         return new Random();
+    }
+
+    @Bean
+    public Gson createGson() {
+        return new Gson();
     }
 
 }
