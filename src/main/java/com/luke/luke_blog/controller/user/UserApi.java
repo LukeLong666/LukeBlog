@@ -6,6 +6,7 @@ import com.luke.luke_blog.service.IUserService;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -150,6 +151,7 @@ public class UserApi {
      * @param size 大小
      * @return {@link ResponseResult}
      */
+    @PreAuthorize("@permission.admin()")
     @GetMapping("/list")
     public ResponseResult listUsers(HttpServletRequest request,HttpServletResponse response,
                                     @RequestParam("page") int page,@RequestParam("size") int size) {
@@ -162,6 +164,7 @@ public class UserApi {
      * @param userId 用户id
      * @return {@link ResponseResult}
      */
+    @PreAuthorize("@permission.admin()")
     @DeleteMapping("/{userId}")
     public ResponseResult deleteUser(@PathVariable("userId") String userId,
                                      HttpServletRequest request,HttpServletResponse response) {
