@@ -23,6 +23,11 @@ public class ErrorPageController {
         return ResponseResult.FAILURE(40004, "页面丢失", null);
     }
 
+    @GetMapping("/500")
+    public ResponseResult page500() {
+        return ResponseResult.FAILURE(50004, "系统繁忙,请稍后重试", null);
+    }
+
     @GetMapping("/504")
     public ResponseResult page504() {
         return ResponseResult.FAILURE(50004, "系统繁忙,请稍后重试", null);

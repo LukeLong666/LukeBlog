@@ -31,4 +31,7 @@ public interface CategoryMapper {
 
     @Update("update tb_categories set name=#{name},description=#{description},pinyin=#{pinyin},`order`=#{order} where id = #{id}")
     int updateById(Category categoryFromDb);
+
+    @Update("update tb_categories set status = '0' where id = #{categoryId}")
+    int deleteById(String categoryId);
 }

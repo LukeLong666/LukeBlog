@@ -40,8 +40,9 @@ public class CategoryAdminApi {
      * @return {@link ResponseResult}
      */
     @DeleteMapping("/{categoryId}")
+    @PreAuthorize("@permission.admin()")
     public ResponseResult deleteCategory(@PathVariable("categoryId") String categoryId) {
-        return ResponseResult.SUCCESS(null);
+        return categoryService.deleteCategory(categoryId);
     }
 
 

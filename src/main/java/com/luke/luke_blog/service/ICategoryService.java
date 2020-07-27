@@ -45,4 +45,12 @@ public interface ICategoryService {
      * @return {@link ResponseResult}
      */
     ResponseResult updateCategory(String categoryId, Category category);
+
+    /**
+     * 删除类别
+     *
+     * @param categoryId 类别id
+     * @return {@link ResponseResult}
+     */
+    ResponseResult deleteCategory(String categoryId);
 }

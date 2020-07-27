@@ -124,4 +124,11 @@ public class CategoryServiceImpl implements ICategoryService {
         //返回结果
         return result > 0 ? ResponseResult.SUCCESS("修改成功", result) : ResponseResult.FAILURE("修改失败");
     }
+
+    @Override
+    public ResponseResult deleteCategory(String categoryId) {
+        int result = categoryDao.deleteById(categoryId);
+        log.info(TAG+" deleteCategory() --> result : "+result);
+        return result > 0 ? ResponseResult.SUCCESS("删除成功", result) : ResponseResult.FAILURE("删除失败");
+    }
 }
