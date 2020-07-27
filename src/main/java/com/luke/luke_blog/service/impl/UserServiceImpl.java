@@ -21,6 +21,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -225,7 +227,7 @@ public class UserServiceImpl implements IUserService {
         }
         //发送验证码,验证码范围6位数100000-999999
         try {
-            System.out.println(code);
+            log.info("verify code ===> "+code);
             taskService.sendEmailVerifyCode(String.valueOf(code), emailAddress);
         } catch (Exception e) {
             return ResponseResult.FAILURE("验证码发送失败,请稍后重试");
@@ -417,15 +419,17 @@ public class UserServiceImpl implements IUserService {
     }
 
     /**
+     * 检查用户
      * 检查用户是否有登录
      * 如果登录,返回用户信息
      *
-     * @param request  请求
-     * @param response 响应
      * @return {@link User}
      */
     @Override
-    public User checkUser(HttpServletRequest request, HttpServletResponse response) {
+    public User checkUser() {
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = requestAttributes.getRequest();
+        HttpServletResponse response = requestAttributes.getResponse();
         log.info("checkUser()");
         String tokenKey = CookieUtils.getCookie(request, Constants.User.COOKIE_TOKEN_KEY);
         log.info("tokenKey ===>> "+tokenKey);
@@ -555,7 +559,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ResponseResult updateUserInfo(HttpServletRequest request, HttpServletResponse response, String userId, User user) {
         //检查是否已经登陆
-        User userFromKey = checkUser(request, response);
+        User userFromKey = checkUser();
         if (userFromKey == null) {
             log.info("账号未登录");
             return ResponseResult.ACCOUNT_NOT_LOGIN("账号未登录");
@@ -610,6 +614,15 @@ public class UserServiceImpl implements IUserService {
         return ResponseResult.FAILURE("用户不存在");
     }
 
+    /**
+     * 用户列表
+     *
+     * @param request  请求
+     * @param response 响应
+     * @param page     页面
+     * @param size     大小
+     * @return {@link ResponseResult}
+     */
     @Override
     public ResponseResult listUsers(HttpServletRequest request, HttpServletResponse response, int page, int size) {
         //获取用户列表
@@ -624,5 +637,56 @@ public class UserServiceImpl implements IUserService {
         PageInfo<User> pageInfo = new PageInfo<>(listUsers);
         log.info("PageInfo =====> "+pageInfo.toString());
         return ResponseResult.SUCCESS("查询成功!", pageInfo);
+    }
+
+    /**
+     * 更新密码
+     *
+     * @param user       用户
+     * @param verifyCode 验证代码
+     * @return {@link ResponseResult}
+     */
+    @Override
+    public ResponseResult updatePassword(User user, String verifyCode) {
+        //检查邮箱是否有填写
+        if (TextUtils.isEmpty(user.getEmail())) {
+            return ResponseResult.FAILURE("邮箱不可以为空");
+        }
+        //根据邮箱去redis里拿验证
+        String verifyCodeRedis = (String) redisUtil.get(Constants.User.KEY_EMAIL_CODE_CONTENT + user.getEmail());
+        if (verifyCodeRedis == null||!verifyCodeRedis.equals(verifyCode)) {
+            return ResponseResult.FAILURE("验证码错误");
+        }
+        redisUtil.del(Constants.User.KEY_EMAIL_CODE_CONTENT + user.getEmail());
+        int result = userDao.updatePasswordByEmail(passwordEncoder.encode(user.getPassword()), user.getEmail());
+        if (result>0) {
+            return ResponseResult.SUCCESS("修改成功", result);
+        }
+        return ResponseResult.FAILURE("修改失败");
+    }
+
+
+    /**
+     * 更新电子邮件
+     *
+     * @param verifyCode 验证代码
+     * @param email      电子邮件
+     * @return {@link ResponseResult}
+     */
+    @Override
+    public ResponseResult updateEmail(String verifyCode, String email) {
+        User user = this.checkUser();
+        if (user == null) {
+            return ResponseResult.FAILURE("账号未登录");
+        }
+        String verifyCodeRedis = (String) redisUtil.get(Constants.User.KEY_EMAIL_CODE_CONTENT + email);
+        if (TextUtils.isEmpty(verifyCodeRedis)||!verifyCode.equals(verifyCodeRedis)) {
+            return ResponseResult.FAILURE("验证码错误");
+        }
+        int result = userDao.updateEmailById(email, user.getId());
+        if (result>0) {
+            return ResponseResult.SUCCESS("修改成功", result);
+        }
+        return ResponseResult.FAILURE("修改失败");
     }
 }

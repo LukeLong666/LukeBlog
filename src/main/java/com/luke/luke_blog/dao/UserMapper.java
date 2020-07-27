@@ -69,15 +69,19 @@ public interface UserMapper {
     @Update("update tb_user set user_name = #{userName},avatar = #{avatar},sign=#{sign},update_time=#{updateTime} where id = #{id}")
     int updateById(User userAccount);
 
-    /**
-     * 删除用户的状态
-     *
-     * @param userId 用户id
-     * @return int
-     */
+
     @Update("update tb_user set state='0' where id = #{userId}")
     int deleteUserByState(String userId);
 
+
     @Select("select id,user_name,roles,avatar,email,sign,state,reg_ip,login_ip,create_time from tb_user order by create_time DESC")
     List<User> findAll();
+
+
+    @Update("update tb_user set password = #{encode} where email = #{email}")
+    int updatePasswordByEmail(String encode, String email);
+
+
+    @Update("update tb_user set email = #{email} where id = #{id}")
+    int updateEmailById(String email, String id);
 }

@@ -67,7 +67,7 @@ public interface IUserService {
      *
      * @return {@link User}
      */
-    User checkUser(HttpServletRequest request,HttpServletResponse response);
+    User checkUser();
 
     /**
      * 获取用户信息
@@ -123,4 +123,22 @@ public interface IUserService {
      * @return {@link ResponseResult}
      */
     ResponseResult listUsers(HttpServletRequest request, HttpServletResponse response, int page, int size);
+
+    /**
+     * 更新密码
+     *
+     * @param user       用户
+     * @param verifyCode 验证代码
+     * @return {@link ResponseResult}
+     */
+    ResponseResult updatePassword(User user, String verifyCode);
+
+    /**
+     * 更新电子邮件
+     *
+     * @param verifyCode 验证代码
+     * @param email      电子邮件
+     * @return {@link ResponseResult}
+     */
+    ResponseResult updateEmail(String verifyCode, String email);
 }

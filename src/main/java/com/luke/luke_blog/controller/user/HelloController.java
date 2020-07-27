@@ -107,8 +107,7 @@ public class HelloController {
         if (tokenKey == null) {
             return ResponseResult.FAILURE("账号未登录");
         }
-        User user = userService.checkUser(request, response);
-        // TODO: 2020/7/25
+        User user = userService.checkUser();
         if (user == null) {
             return ResponseResult.FAILURE("账号未登录");
         }
