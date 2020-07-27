@@ -14,7 +14,7 @@ public class FriendLink {
     private String name;
     private String logo;
     private String url;
-    private Integer order;
+    private Integer order=0;
     private String state;
     private Date createTime;
     private Date updateTime;
@@ -81,5 +81,19 @@ public class FriendLink {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @Override
+    public String toString() {
+        return "FriendLink{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", logo='" + logo + '\'' +
+                ", url='" + url + '\'' +
+                ", order=" + order +
+                ", state='" + state + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
     }
 }
