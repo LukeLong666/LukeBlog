@@ -52,9 +52,10 @@ public class CategoryAdminApi {
      * @param category   类别
      * @return {@link ResponseResult}
      */
+    @PreAuthorize("@permission.admin()")
     @PutMapping("/{categoryId}")
     public ResponseResult updateCategory(@PathVariable("categoryId") String categoryId,@RequestBody Category category) {
-        return ResponseResult.SUCCESS(null);
+        return categoryService.updateCategory(categoryId,category);
     }
 
     /**

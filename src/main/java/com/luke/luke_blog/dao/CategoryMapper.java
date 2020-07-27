@@ -1,10 +1,10 @@
 package com.luke.luke_blog.dao;
 
 import com.luke.luke_blog.pojo.Category;
-import com.luke.luke_blog.pojo.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -27,5 +27,8 @@ public interface CategoryMapper {
     Category findOneById(String categoryId);
 
     @Select("select * from tb_categories order by create_time DESC")
-    List<User> findAll();
+    List<Category> findAll();
+
+    @Update("update tb_categories set name=#{name},description=#{description},pinyin=#{pinyin},`order`=#{order} where id = #{id}")
+    int updateById(Category categoryFromDb);
 }

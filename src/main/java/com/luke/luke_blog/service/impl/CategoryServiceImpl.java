@@ -4,7 +4,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.luke.luke_blog.dao.CategoryMapper;
 import com.luke.luke_blog.pojo.Category;
-import com.luke.luke_blog.pojo.User;
 import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.ICategoryService;
 import com.luke.luke_blog.utils.Constants;
@@ -86,13 +85,43 @@ public class CategoryServiceImpl implements ICategoryService {
             size = Constants.Page.MIN_SIZE;
         }
         PageHelper.startPage(page, size);
-        List<User> listUsers = categoryDao.findAll();
-        log.info(TAG+" listCategories() --> listUsers : "+listUsers);
-        PageInfo<User> pageInfo = new PageInfo<>(listUsers);
+        List<Category> categoryList = categoryDao.findAll();
+        log.info(TAG+" listCategories() --> categoryList : "+categoryList);
+        PageInfo<Category> pageInfo = new PageInfo<>(categoryList);
         log.info(TAG+" listCategories() --> pageInfo : "+pageInfo);
         log.info(TAG+" listCategories() --> ResponseResult : "+"查询成功");
         return ResponseResult.SUCCESS("获取分类列表成功!", pageInfo);
     }
 
-
+    @Override
+    public ResponseResult updateCategory(String categoryId, Category category) {
+        //找出来
+        Category categoryFromDb = categoryDao.findOneById(categoryId);
+        if (categoryFromDb == null) {
+            log.info(TAG+" updateCategory() --> categoryFromDb : "+"分类不存在");
+            return ResponseResult.FAILURE("分类不存在");
+        }
+        //内容改判断
+        String name = category.getName();
+        if (!TextUtils.isEmpty(name)) {
+            log.info(TAG+" updateCategory() --> name : "+name);
+            categoryFromDb.setName(name);
+        }
+        String pinyin = category.getPinyin();
+        if (!TextUtils.isEmpty(pinyin)) {
+            log.info(TAG+" updateCategory() --> pinyin : "+pinyin);
+            categoryFromDb.setPinyin(pinyin);
+        }
+        String description = category.getDescription();
+        if (!TextUtils.isEmpty(description)) {
+            log.info(TAG+" updateCategory() --> description : "+description);
+            categoryFromDb.setDescription(description);
+        }
+        categoryFromDb.setOrder(category.getOrder());
+        //第三步保存数据
+        int result = categoryDao.updateById(categoryFromDb);
+        log.info(TAG+" updateCategory() --> result : "+result);
+        //返回结果
+        return result > 0 ? ResponseResult.SUCCESS("修改成功", result) : ResponseResult.FAILURE("修改失败");
+    }
 }

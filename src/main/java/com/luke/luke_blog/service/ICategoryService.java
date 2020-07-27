@@ -36,4 +36,13 @@ public interface ICategoryService {
      * @return {@link ResponseResult}
      */
     ResponseResult listCategories(int page, int size);
+
+    /**
+     * 更新类别
+     *
+     * @param categoryId 类别id
+     * @param category   类别
+     * @return {@link ResponseResult}
+     */
+    ResponseResult updateCategory(String categoryId, Category category);
 }
