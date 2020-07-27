@@ -71,7 +71,7 @@ public class UserApi {
      * @param user 用户
      * @return {@link ResponseResult}
      */
-    @PostMapping
+    @PostMapping("/join_in")
     public ResponseResult register(@RequestBody User user,
                                    @RequestParam("email_code") String emailCode,
                                    @RequestParam("captcha_code") String captchaCode,
@@ -93,7 +93,7 @@ public class UserApi {
      * @param captchaKey 验证码的关键
      * @return {@link ResponseResult}
      */
-    @PostMapping("/{captcha}/{captcha_key}")
+    @PostMapping("/login/{captcha}/{captcha_key}")
     public ResponseResult login(@PathVariable("captcha_key") String captchaKey,
                                 @PathVariable("captcha") String captcha,
                                 @RequestBody User user,
@@ -123,7 +123,7 @@ public class UserApi {
      * @param userId 用户id
      * @return {@link ResponseResult}
      */
-    @GetMapping("/{userId}")
+    @GetMapping("/user_info/{userId}")
     public ResponseResult getUserInfo(@PathVariable("userId") String userId) {
         return userService.getUserInfo(userId);
     }
@@ -144,7 +144,7 @@ public class UserApi {
      * @return {@link ResponseResult}
      * @see
      */
-    @PutMapping("/{userId}")
+    @PutMapping("/user_info/{userId}")
     public ResponseResult updateUserInfo(HttpServletRequest request, HttpServletResponse response,
                                          @PathVariable("userId") String userId, @RequestBody User user) {
         return userService.updateUserInfo(request, response, userId, user);

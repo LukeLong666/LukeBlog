@@ -683,6 +683,7 @@ public class UserServiceImpl implements IUserService {
         if (TextUtils.isEmpty(verifyCodeRedis)||!verifyCode.equals(verifyCodeRedis)) {
             return ResponseResult.FAILURE("验证码错误");
         }
+        redisUtil.del(Constants.User.KEY_EMAIL_CODE_CONTENT + email);
         int result = userDao.updateEmailById(email, user.getId());
         if (result>0) {
             return ResponseResult.SUCCESS("修改成功", result);

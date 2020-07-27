@@ -14,7 +14,7 @@ public class Category {
     private String name;
     private String pinyin;
     private String description;
-    private Integer order;
+    private Integer order=1;
     private String status;
     private Date createTime;
     private Date updateTime;
@@ -81,5 +81,19 @@ public class Category {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", pinyin='" + pinyin + '\'' +
+                ", description='" + description + '\'' +
+                ", order=" + order +
+                ", status='" + status + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
     }
 }
