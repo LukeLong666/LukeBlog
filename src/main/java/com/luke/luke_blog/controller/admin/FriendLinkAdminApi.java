@@ -42,7 +42,7 @@ public class FriendLinkAdminApi {
     @PreAuthorize("@permission.admin()")
     @DeleteMapping("/{friendLinkId}")
     public ResponseResult deleteFriendLink(@PathVariable("friendLinkId") String friendLinkId) {
-        return ResponseResult.SUCCESS(null);
+        return null;
     }
 
     /**
@@ -66,7 +66,7 @@ public class FriendLinkAdminApi {
     @PreAuthorize("@permission.admin()")
     @GetMapping("/{friendLinkId}")
     public ResponseResult getFriendLink(@PathVariable("friendLinkId") String friendLinkId) {
-        return ResponseResult.SUCCESS(null);
+        return friendLinkService.getFriendLink(friendLinkId);
     }
 
     /**
@@ -77,8 +77,8 @@ public class FriendLinkAdminApi {
      * @return {@link ResponseResult}
      */
     @PreAuthorize("@permission.admin()")
-    @GetMapping("/list")
-    public ResponseResult listFriendLinks(@RequestParam("page") int page,@RequestParam("size") int size) {
-        return ResponseResult.SUCCESS(null);
+    @GetMapping("/list/{page}/{size}")
+    public ResponseResult listFriendLinks(@PathVariable("page") int page,@PathVariable("size") int size) {
+        return friendLinkService.listFriendLinks(page,size);
     }
 }

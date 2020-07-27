@@ -17,4 +17,21 @@ public interface IFriendLinkService {
      * @return {@link ResponseResult}
      */
     ResponseResult addFriendLink(FriendLink friendLink);
+
+    /**
+     * 得到朋友的链接
+     *
+     * @param friendLinkId 朋友链接id
+     * @return {@link ResponseResult}
+     */
+    ResponseResult getFriendLink(String friendLinkId);
+
+    /**
+     * 朋友链接列表
+     *
+     * @param page 页面
+     * @param size 大小
+     * @return {@link ResponseResult}
+     */
+    ResponseResult listFriendLinks(int page, int size);
 }
