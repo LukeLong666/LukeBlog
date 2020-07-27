@@ -45,4 +45,7 @@ public interface RefreshTokenMapper {
 
     @Delete("delete from tb_refresh_token where user_id = #{userId}")
     int deleteByUserId(String userId);
+
+    @Delete("delete from tb_refresh_token where token_key = #{tokenKey}")
+    int deleteByTokenKey(String tokenKey);
 }

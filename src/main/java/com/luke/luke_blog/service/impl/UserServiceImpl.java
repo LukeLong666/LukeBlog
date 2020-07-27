@@ -689,4 +689,23 @@ public class UserServiceImpl implements IUserService {
         }
         return ResponseResult.FAILURE("修改失败");
     }
+
+    @Override
+    public ResponseResult logout() {
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = requestAttributes.getRequest();
+        HttpServletResponse response = requestAttributes.getResponse();
+        //拿到token_key
+        String tokenKey = CookieUtils.getCookie(request, Constants.User.COOKIE_TOKEN_KEY);
+        if (TextUtils.isEmpty(tokenKey)) {
+            return ResponseResult.ACCOUNT_NOT_LOGIN("没有用户登陆");
+        }
+        //删除redis
+        redisUtil.del(Constants.User.KEY_TOKEN + tokenKey);
+        //删除cookie
+        CookieUtils.deleteCookie(request,response,Constants.User.COOKIE_TOKEN_KEY);
+        //删除mysql里的refreshToken
+        int result = refreshTokenDao.deleteByTokenKey(tokenKey);
+        return ResponseResult.SUCCESS("退出成功", result);
+    }
 }

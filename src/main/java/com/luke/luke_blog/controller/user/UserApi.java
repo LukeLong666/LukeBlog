@@ -220,4 +220,8 @@ public class UserApi {
         return userService.updateEmail(verifyCode,email);
     }
 
+    @GetMapping("/logout")
+    public ResponseResult logout() {
+        return userService.logout();
+    }
 }

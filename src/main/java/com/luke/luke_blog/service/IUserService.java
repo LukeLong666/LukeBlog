@@ -141,4 +141,11 @@ public interface IUserService {
      * @return {@link ResponseResult}
      */
     ResponseResult updateEmail(String verifyCode, String email);
+
+    /**
+     * 注销
+     *
+     * @return {@link ResponseResult}
+     */
+    ResponseResult logout();
 }
