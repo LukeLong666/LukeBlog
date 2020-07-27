@@ -19,4 +19,21 @@ public interface ICategoryService {
      * @return {@link ResponseResult}
      */
     ResponseResult addCategory(Category category);
+
+    /**
+     * 得到类别
+     *
+     * @param categoryId 类别id
+     * @return {@link ResponseResult}
+     */
+    ResponseResult getCategory(String categoryId);
+
+    /**
+     * 类别列表
+     *
+     * @param page 页面
+     * @param size 大小
+     * @return {@link ResponseResult}
+     */
+    ResponseResult listCategories(int page, int size);
 }

@@ -58,14 +58,15 @@ public class CategoryAdminApi {
     }
 
     /**
-     * 得到类别
-     *
+     * 获取单个类别
+     * 需要管理员权限
      * @param categoryId 类别id
      * @return {@link ResponseResult}
      */
+    @PreAuthorize("@permission.admin()")
     @GetMapping("/{categoryId}")
     public ResponseResult getCategory(@PathVariable("categoryId") String categoryId) {
-        return ResponseResult.SUCCESS(null);
+        return categoryService.getCategory(categoryId);
     }
 
     /**
@@ -75,8 +76,9 @@ public class CategoryAdminApi {
      * @param size 大小
      * @return {@link ResponseResult}
      */
-    @GetMapping("/list")
-    public ResponseResult listCategories(@RequestParam("page") int page,@RequestParam("size") int size) {
-        return ResponseResult.SUCCESS(null);
+    @PreAuthorize("@permission.admin()")
+    @GetMapping("/list/{page}/{size}")
+    public ResponseResult listCategories(@PathVariable("page") int page,@PathVariable("size") int size) {
+        return categoryService.listCategories(page, size);
     }
 }
