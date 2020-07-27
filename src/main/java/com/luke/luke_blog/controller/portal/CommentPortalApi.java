@@ -22,7 +22,7 @@ public class CommentPortalApi {
      */
     @PostMapping
     public ResponseResult postComment(@RequestBody Comment comment) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -33,7 +33,7 @@ public class CommentPortalApi {
      */
     @DeleteMapping("/{commentId}")
     public ResponseResult deleteComment(@PathVariable("commentId") String commentId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -44,6 +44,6 @@ public class CommentPortalApi {
      */
     @GetMapping("/list/{articleId}")
     public ResponseResult listComment(@PathVariable("articleId") String articleId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 }

@@ -16,36 +16,36 @@ public class ArticleAdminApi {
 
     @PostMapping
     public ResponseResult postArticle(@RequestBody Article article) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     @DeleteMapping("/{articleId}")
     public ResponseResult deleteArticle(@PathVariable("articleId") String articleId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     @PutMapping("/{articleId}")
     public ResponseResult updateArticle(@PathVariable("articleId") String articleId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     @GetMapping("/{articleId}")
     public ResponseResult getArticle(@PathVariable("articleId") String articleId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     @GetMapping("/list")
     public ResponseResult listArticles(@RequestParam("page") int page,@RequestParam("size") int size) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     @PutMapping("/state/{articleId}/{state}")
     public ResponseResult updateArticleState(@PathVariable("state") String state,@PathVariable("articleId") String articleId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     @PutMapping("/top/{articleId}")
     public ResponseResult updateArticleState(@PathVariable("articleId") String articleId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 }

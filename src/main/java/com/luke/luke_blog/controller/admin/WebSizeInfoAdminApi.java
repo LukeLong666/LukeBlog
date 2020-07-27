@@ -20,7 +20,7 @@ public class WebSizeInfoAdminApi {
      */
     @GetMapping("/title")
     public ResponseResult getWebSizeTitle() {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -31,7 +31,7 @@ public class WebSizeInfoAdminApi {
      */
     @PutMapping("/title")
     public ResponseResult updateWebSizeTitle(@RequestParam("title") String title) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -41,16 +41,16 @@ public class WebSizeInfoAdminApi {
      */
     @GetMapping("/seo")
     public ResponseResult getSeoInfo() {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     @PutMapping("/seo")
     public ResponseResult putSeoInfo(@RequestParam("keywords") String keywords, @RequestParam("description") String description) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     @GetMapping("/view_count")
     public ResponseResult getWebSizeViewCount() {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 }

@@ -15,17 +15,17 @@ public class CommentAdminApi {
 
     @DeleteMapping("/{commentId}")
     public ResponseResult deleteComment(@PathVariable("commentId") String commentId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
 
     @GetMapping("/list")
     public ResponseResult listComments(@RequestParam("page") int page,@RequestParam("size") int size) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     @PutMapping("/top/{commentId}")
     public ResponseResult topComment(@PathVariable("commentId") String commentId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 }

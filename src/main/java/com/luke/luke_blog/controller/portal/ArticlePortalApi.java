@@ -22,7 +22,7 @@ public class ArticlePortalApi {
      */
     @GetMapping("/list/{page}/{size}")
     public ResponseResult listArticle(@PathVariable("page") int page, @PathVariable("size") int size) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -35,7 +35,7 @@ public class ArticlePortalApi {
      */
     @GetMapping("/list/{categoryId}/{page}/{size}")
     public ResponseResult listArticleByCategoryId(@PathVariable("categoryId") String categoryId,@PathVariable("page") int page, @PathVariable("size") int size) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -46,7 +46,7 @@ public class ArticlePortalApi {
      */
     @GetMapping("/{articleId}")
     public ResponseResult getArticleDetail(@PathVariable("categoryId") String categoryId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -57,6 +57,6 @@ public class ArticlePortalApi {
      */
     @GetMapping("/recommend/{articleId}")
     public ResponseResult getRecommendArticle(@PathVariable("categoryId") String categoryId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 }

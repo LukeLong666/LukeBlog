@@ -25,6 +25,6 @@ public class SearchPortalApi {
      */
     @GetMapping()
     public ResponseResult doSearch(@RequestParam("keyword") String keyword,@RequestParam("page") int page) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 }

@@ -15,6 +15,8 @@ public class ResponseResult {
     //成功 20000
     //登陆成功 20001
     //注册成功 20002
+    //权限不足 30000
+    //未登录 10000
     private Integer code;
     private String message;
     private Object data;
@@ -58,27 +60,43 @@ public class ResponseResult {
         this.data = data;
     }
 
-    public static ResponseResult success(Integer code,String message,Object data) {
+    public static ResponseResult SUCCESS(Integer code, String message, Object data) {
         return new ResponseResult(true,code,message,data);
     }
 
-    public static ResponseResult success(String message,Object data) {
+    public static ResponseResult SUCCESS(String message, Object data) {
         return new ResponseResult(true,20000,message,data);
     }
 
-    public static ResponseResult success(Object data) {
+    public static ResponseResult SUCCESS(Object data) {
         return new ResponseResult(true,20000,"No message",data);
     }
 
-    public static ResponseResult failure(Integer code,String message,Object data) {
+    public static ResponseResult FAILURE(Integer code, String message, Object data) {
         return new ResponseResult(false,code,message,data);
     }
 
-    public static ResponseResult failure(String message,Object data) {
+    public static ResponseResult FAILURE(String message, Object data) {
         return new ResponseResult(false,0,message,data);
     }
 
-    public static ResponseResult failure(String message) {
+    public static ResponseResult FAILURE(String message) {
         return new ResponseResult(false,0,message,null);
+    }
+
+    public static ResponseResult ACCOUNT_NOT_LOGIN() {
+        return new ResponseResult(false,10000,null,null);
+    }
+
+    public static ResponseResult ACCOUNT_NOT_LOGIN(String message) {
+        return new ResponseResult(false,10000,message,null);
+    }
+
+    public static ResponseResult PERMISSION_DENY(){
+        return new ResponseResult(false,30000,null,null);
+    }
+
+    public static ResponseResult PERMISSION_DENY(String message){
+        return new ResponseResult(false,30000,message,null);
     }
 }

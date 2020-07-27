@@ -22,7 +22,7 @@ public class CategoryAdminApi {
      */
     @PostMapping
     public ResponseResult addCategory(@RequestBody Category category) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -33,7 +33,7 @@ public class CategoryAdminApi {
      */
     @DeleteMapping("/{categoryId}")
     public ResponseResult deleteCategory(@PathVariable("categoryId") String categoryId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
 
@@ -46,7 +46,7 @@ public class CategoryAdminApi {
      */
     @PutMapping("/{categoryId}")
     public ResponseResult updateCategory(@PathVariable("categoryId") String categoryId,@RequestBody Category category) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -57,7 +57,7 @@ public class CategoryAdminApi {
      */
     @GetMapping("/{categoryId}")
     public ResponseResult getCategory(@PathVariable("categoryId") String categoryId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -69,6 +69,6 @@ public class CategoryAdminApi {
      */
     @GetMapping("/list")
     public ResponseResult listCategories(@RequestParam("page") int page,@RequestParam("size") int size) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 }

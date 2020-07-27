@@ -92,7 +92,6 @@ public class UserApi {
      * @param captchaKey 验证码的关键
      * @return {@link ResponseResult}
      */
-    // TODO: 2020/7/23 登录
     @PostMapping("/{captcha}/{captcha_key}")
     public ResponseResult login(@PathVariable("captcha_key") String captchaKey,
                                 @PathVariable("captcha") String captcha,
@@ -111,7 +110,7 @@ public class UserApi {
      */
     @PutMapping("/password/{userId}")
     public ResponseResult updatePassword(@PathVariable("userId") String userId,@RequestBody User user) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -139,31 +138,36 @@ public class UserApi {
      * @return {@link ResponseResult}
      */
     @PutMapping("/{userId}")
-    public ResponseResult updateUserInfo(@PathVariable("userId") String userId,@RequestBody User user) {
-        return ResponseResult.success(null);
+    public ResponseResult updateUserInfo(HttpServletRequest request,HttpServletResponse response,
+                                         @PathVariable("userId") String userId,@RequestBody User user) {
+        return userService.updateUserInfo(request,response,userId,user);
     }
 
     /**
      * 用户列表
-     *
+     * 需要管理员权限
      * @param page 页面
      * @param size 大小
      * @return {@link ResponseResult}
      */
     @GetMapping("/list")
-    public ResponseResult listUsers(@RequestParam("page") int page,@RequestParam("size") int size) {
-        return ResponseResult.success(null);
+    public ResponseResult listUsers(HttpServletRequest request,HttpServletResponse response,
+                                    @RequestParam("page") int page,@RequestParam("size") int size) {
+        return userService.listUsers(request,response,page,size);
     }
 
     /**
      * 删除用户
-     *
+     * 需要管理员权限
      * @param userId 用户id
      * @return {@link ResponseResult}
      */
     @DeleteMapping("/{userId}")
-    public ResponseResult deleteUser(@PathVariable("userId") String userId) {
-        return ResponseResult.success(null);
+    public ResponseResult deleteUser(@PathVariable("userId") String userId,
+                                     HttpServletRequest request,HttpServletResponse response) {
+        //判断当前的操作用户
+        // TODO: 2020/7/26 通过注解的方式控制权限
+        return userService.deleteUserById(userId,request,response);
     }
 
 

@@ -16,26 +16,26 @@ public class LooperAdminApi {
 
     @PostMapping
     public ResponseResult addLooper(@RequestBody Looper looper) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     @DeleteMapping("/{looperId}")
     public ResponseResult deleteLooper(@PathVariable("looperId") String looperId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     @PutMapping("/{looperId}")
     public ResponseResult updateLooper(@PathVariable("looperId") String looperId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     @GetMapping("/{looperId}")
     public ResponseResult getLooper(@PathVariable("looperId") String looperId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     @GetMapping("/list")
     public ResponseResult listLoopers(@RequestParam("page") int page,@RequestParam("size") int size) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 }

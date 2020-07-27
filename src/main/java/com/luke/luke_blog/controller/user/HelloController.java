@@ -53,7 +53,7 @@ public class HelloController {
         user.setUserName("张鑫龙");
         String string = (String) redisUtil.get(Constants.User.KEY_CAPTCHA_CONTENT + "123456");
         log.info("haha");
-        return ResponseResult.success("哈哈", string);
+        return ResponseResult.SUCCESS("哈哈", string);
     }
 
     @PostMapping("/label")
@@ -62,7 +62,7 @@ public class HelloController {
         label.setCreateTime(new Date());
         label.setUpdateTime(new Date());
         int result = labelDao.save(label);
-        return result != 0 ? ResponseResult.success("添加成功", null) : ResponseResult.success("添加失败", null);
+        return result != 0 ? ResponseResult.SUCCESS("添加成功", null) : ResponseResult.SUCCESS("添加失败", null);
     }
 
     @Autowired
@@ -105,13 +105,14 @@ public class HelloController {
         String tokenKey = CookieUtils.getCookie(request, Constants.User.COOKIE_TOKEN_KEY);
         log.info("comment tokenKey == > "+tokenKey);
         if (tokenKey == null) {
-            return ResponseResult.failure("账号未登录");
+            return ResponseResult.FAILURE("账号未登录");
         }
         User user = userService.checkUser(request, response);
         // TODO: 2020/7/25
         if (user == null) {
-            return ResponseResult.failure("账号未登录");
+            return ResponseResult.FAILURE("账号未登录");
         }
+        comment.setContent(content);
         comment.setUserId(user.getId());
         comment.setUserAvatar(user.getAvatar());
         comment.setUserName(user.getUserName());
@@ -119,7 +120,8 @@ public class HelloController {
         comment.setUpdateTime(new Date());
         comment.setState("1");
         comment.setId(String.valueOf(idWorker.nextId()));
+        log.info("comment ====> " + comment.toString());
         commentDao.save(comment);
-        return ResponseResult.success("评论成功", null);
+        return ResponseResult.SUCCESS("评论成功", null);
     }
 }

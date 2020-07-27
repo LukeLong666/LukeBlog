@@ -22,7 +22,7 @@ public class WebSizeInfoApi {
      */
     @GetMapping("/categories")
     public ResponseResult getCategores() {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -32,7 +32,7 @@ public class WebSizeInfoApi {
      */
     @GetMapping("/title")
     public ResponseResult getTitle() {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -42,7 +42,7 @@ public class WebSizeInfoApi {
      */
     @GetMapping("/view_count")
     public ResponseResult getViewCount() {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -52,7 +52,7 @@ public class WebSizeInfoApi {
      */
     @GetMapping("/seo")
     public ResponseResult getSeo() {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -62,7 +62,7 @@ public class WebSizeInfoApi {
      */
     @GetMapping("/loop")
     public ResponseResult getLoops() {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -72,6 +72,6 @@ public class WebSizeInfoApi {
      */
     @GetMapping("/friend_link")
     public ResponseResult getLinks() {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 }

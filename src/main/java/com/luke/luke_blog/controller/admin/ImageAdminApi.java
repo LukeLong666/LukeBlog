@@ -20,7 +20,7 @@ public class ImageAdminApi {
      */
     @PostMapping
     public ResponseResult uploadImage() {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -31,7 +31,7 @@ public class ImageAdminApi {
      */
     @DeleteMapping("/{imageId}")
     public ResponseResult deleteImage(@PathVariable("imageId") String imageId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -42,7 +42,7 @@ public class ImageAdminApi {
      */
     @PutMapping("/{imageId}")
     public ResponseResult updateImage(@PathVariable("imageId") String imageId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -53,7 +53,7 @@ public class ImageAdminApi {
      */
     @GetMapping("/{imageId}")
     public ResponseResult getImage(@PathVariable("imageId") String imageId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -65,6 +65,6 @@ public class ImageAdminApi {
      */
     @GetMapping("/list")
     public ResponseResult listImages(@RequestParam("page") int page,@RequestParam("size") int size) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 }

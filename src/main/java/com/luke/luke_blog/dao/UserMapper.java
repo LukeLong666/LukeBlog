@@ -4,6 +4,9 @@ import com.luke.luke_blog.pojo.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
 
 /**
  * 用户映射器
@@ -25,7 +28,7 @@ public interface UserMapper {
             "tb_user(id,user_name,password,roles,avatar,email,sign,state,reg_ip,login_ip,create_time,update_time) " +
             "values(#{id},#{userName},#{password},#{roles},#{avatar},#{email},#{sign},#{state},#{regIp},#{loginIp}," +
             "#{createTime},#{updateTime})")
-    int sava(User user);
+    int save(User user);
 
 
     /**
@@ -57,4 +60,24 @@ public interface UserMapper {
     User findOneById(String id);
 
 
+    /**
+     * 更新通过id
+     *
+     * @param userAccount 用户帐户
+     * @return int
+     */
+    @Update("update tb_user set user_name = #{userName},avatar = #{avatar},sign=#{sign},update_time=#{updateTime} where id = #{id}")
+    int updateById(User userAccount);
+
+    /**
+     * 删除用户的状态
+     *
+     * @param userId 用户id
+     * @return int
+     */
+    @Update("update tb_user set state='0' where id = #{userId}")
+    int deleteUserByState(String userId);
+
+    @Select("select id,user_name,roles,avatar,email,sign,state,reg_ip,login_ip,create_time from tb_user order by create_time DESC")
+    List<User> findAll();
 }

@@ -92,4 +92,35 @@ public interface IUserService {
      * @return {@link ResponseResult}
      */
     ResponseResult checkUserName(String userName);
+
+    /**
+     * 更新用户信息
+     *
+     * @param userId   用户id
+     * @param user     用户
+     * @param response 响应
+     * @return {@link ResponseResult}
+     */
+    ResponseResult updateUserInfo(HttpServletRequest request,HttpServletResponse response,String userId, User user);
+
+    /**
+     * 删除用户的id
+     *
+     * @param userId   用户id
+     * @param request  请求
+     * @param response 响应
+     * @return {@link ResponseResult}
+     */
+    ResponseResult deleteUserById(String userId, HttpServletRequest request, HttpServletResponse response);
+
+    /**
+     * 用户列表
+     *
+     * @param request  请求
+     * @param response 响应
+     * @param page     页面
+     * @param size     大小
+     * @return {@link ResponseResult}
+     */
+    ResponseResult listUsers(HttpServletRequest request, HttpServletResponse response, int page, int size);
 }

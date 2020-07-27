@@ -40,3 +40,7 @@ mybatis:
 logging:
   level:
     com.luke.luke_blog.dao: debug
+
+pagehelper:
+  helper-dialect: mysql
+

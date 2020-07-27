@@ -22,7 +22,7 @@ public class FriendLinkAdminApi {
      */
     @PostMapping
     public ResponseResult addFriendLink(@RequestBody FriendLink friendLink) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -33,7 +33,7 @@ public class FriendLinkAdminApi {
      */
     @DeleteMapping("/{friendLinkId}")
     public ResponseResult deleteFriendLink(@PathVariable("friendLinkId") String friendLinkId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -44,7 +44,7 @@ public class FriendLinkAdminApi {
      */
     @PutMapping("/{friendLinkId}")
     public ResponseResult updateFriendLink(@PathVariable("friendLinkId") String friendLinkId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -55,7 +55,7 @@ public class FriendLinkAdminApi {
      */
     @GetMapping("/{friendLinkId}")
     public ResponseResult getFriendLink(@PathVariable("friendLinkId") String friendLinkId) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 
     /**
@@ -67,6 +67,6 @@ public class FriendLinkAdminApi {
      */
     @GetMapping("/list")
     public ResponseResult listFriendLinks(@RequestParam("page") int page,@RequestParam("size") int size) {
-        return ResponseResult.success(null);
+        return ResponseResult.SUCCESS(null);
     }
 }
