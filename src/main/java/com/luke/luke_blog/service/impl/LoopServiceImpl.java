@@ -66,10 +66,10 @@ public class LoopServiceImpl implements ILoopService {
         }
         Looper looperFromDb = looperDao.findOneById(looperId);
         if (looperFromDb != null) {
-            log.info(TAG+" addLooper() --> looperFromDb : "+looperFromDb);
+            log.info(TAG+" getLooper() --> looperFromDb : "+looperFromDb);
             return ResponseResult.SUCCESS("查询成功", looperFromDb);
         }
-        log.info(TAG+" addLooper() --> looperFromDb : "+null);
+        log.info(TAG+" getLooper() --> looperFromDb : "+null);
         return ResponseResult.FAILURE("轮播图不存在");
     }
 
@@ -99,6 +99,7 @@ public class LoopServiceImpl implements ILoopService {
         if (looperFromDb == null) {
             return ResponseResult.FAILURE("该轮播图不存在");
         }
+        log.info(TAG+" updateLooper() --> looperFromDb : "+looperFromDb);
         //修改数据
         if (!TextUtils.isEmpty(looper.getTitle())) {
             looperFromDb.setTitle(looper.getTitle());
@@ -113,9 +114,11 @@ public class LoopServiceImpl implements ILoopService {
             looperFromDb.setState(looper.getState());
         }
         looperFromDb.setOrder(looper.getOrder());
+        // TODO: 2020/7/28 设置每个更新功能的更新时间
         looperFromDb.setUpdateTime(new Date());
+        log.info(TAG+" updateLooper() --> looperFromDb : "+looperFromDb);
         //更新
-        int result = looperDao.updateById(looper);
+        int result = looperDao.updateById(looperFromDb);
         return result>0?ResponseResult.SUCCESS("更新成功!",result):ResponseResult.FAILURE("更新失败");
     }
 
