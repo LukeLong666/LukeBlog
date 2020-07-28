@@ -8,12 +8,15 @@ import java.util.Date;
  * @author zhang
  * @date 2020/07/20
  */
-public class Images {
+public class Image {
 
     private String id;
     private String userId;
+    private String path;
+    private String name;
     private String url;
     private String state;
+    private String contentType;
     private Date createTime;
     private Date updateTime;
 
@@ -63,5 +66,43 @@ public class Images {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "Images{" +
+                "id='" + id + '\'' +
+                ", userId='" + userId + '\'' +
+                ", path='" + path + '\'' +
+                ", name='" + name + '\'' +
+                ", url='" + url + '\'' +
+                ", state='" + state + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
     }
 }

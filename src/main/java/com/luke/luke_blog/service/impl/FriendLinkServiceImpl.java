@@ -93,4 +93,43 @@ public class FriendLinkServiceImpl implements IFriendLinkService {
         log.info(TAG+" listFriendLinks() --> ResponseResult : "+"查询成功");
         return ResponseResult.SUCCESS("获取友情链接列表成功!", pageInfo);
     }
+
+    @Override
+    public ResponseResult deleteById(String friendLinkId) {
+        int result = friendLinkDao.deleteById(friendLinkId);
+        log.info(TAG+" deleteById() --> delete result : "+result);
+        return result>0?ResponseResult.SUCCESS("删除友情链接成功",result):ResponseResult.FAILURE("删除失败");
+    }
+
+    @Override
+    public ResponseResult update(String friendLinkId, FriendLink friendLink) {
+        //找出来
+        FriendLink friendLinkFromDb = friendLinkDao.findOneById(friendLinkId);
+        if (friendLinkFromDb == null) {
+            log.info(TAG+" update() --> friendLinkFromDb : "+"友情链接不存在");
+            return ResponseResult.FAILURE("友情链接不存在");
+        }
+        //内容改判断
+        String logo = friendLink.getLogo();
+        if (!TextUtils.isEmpty(logo)) {
+            log.info(TAG+" update() --> logo : "+logo);
+            friendLinkFromDb.setLogo(logo);
+        }
+        String name = friendLink.getName();
+        if (!TextUtils.isEmpty(name)) {
+            log.info(TAG+" update() --> name : "+name);
+            friendLinkFromDb.setName(name);
+        }
+        String url = friendLink.getUrl();
+        if (!TextUtils.isEmpty(url)) {
+            log.info(TAG+" update() --> url : "+url);
+            friendLinkFromDb.setUrl(url);
+        }
+        friendLinkFromDb.setOrder(friendLink.getOrder());
+        //第三步保存数据
+        int result = friendLinkDao.updateById(friendLinkFromDb);
+        log.info(TAG+" update() --> result : "+result);
+        //返回结果
+        return result > 0 ? ResponseResult.SUCCESS("修改成功", result) : ResponseResult.FAILURE("修改失败");
+    }
 }

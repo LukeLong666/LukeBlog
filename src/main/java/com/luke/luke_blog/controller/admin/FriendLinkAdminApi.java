@@ -42,7 +42,7 @@ public class FriendLinkAdminApi {
     @PreAuthorize("@permission.admin()")
     @DeleteMapping("/{friendLinkId}")
     public ResponseResult deleteFriendLink(@PathVariable("friendLinkId") String friendLinkId) {
-        return null;
+        return friendLinkService.deleteById(friendLinkId);
     }
 
     /**
@@ -53,8 +53,8 @@ public class FriendLinkAdminApi {
      */
     @PreAuthorize("@permission.admin()")
     @PutMapping("/{friendLinkId}")
-    public ResponseResult updateFriendLink(@PathVariable("friendLinkId") String friendLinkId) {
-        return ResponseResult.SUCCESS(null);
+    public ResponseResult updateFriendLink(@PathVariable("friendLinkId") String friendLinkId,@RequestBody FriendLink friendLink) {
+        return friendLinkService.update(friendLinkId,friendLink);
     }
 
     /**

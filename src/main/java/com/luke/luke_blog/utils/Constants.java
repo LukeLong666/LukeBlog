@@ -32,6 +32,16 @@ public interface Constants {
         int MIN_SIZE = 1;
     }
 
+    interface ImageType {
+        String PREFIX = "image/";
+        String TYPE_JPG = "jpg";
+        String TYPE_PNG = "png";
+        String TYPE_JPEG = "jpeg";
+        String TYPE_JPG_WITH_PREFIX = PREFIX + "jpg";
+        String TYPE_PNG_WITH_PREFIX = PREFIX + "png";
+        String TYPE_JPEG_WITH_PREFIX = PREFIX + "jpeg";
+    }
+
     interface TimeValue {
         long HOUR_2 = 2 * 60 * 60 * 1000;
 

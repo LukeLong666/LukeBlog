@@ -1,9 +1,7 @@
 package com.luke.luke_blog.dao;
 
 import com.luke.luke_blog.pojo.FriendLink;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -19,4 +17,10 @@ public interface FriendLinkMapper {
 
     @Select("select * from tb_friends where state='1'")
     List<FriendLink> findAll();
+
+    @Delete("delete from tb_friends where id = #{id}")
+    int deleteById(String id);
+
+    @Update("update tb_friends set url=#{url},name=#{name},logo=#{logo},`order`=#{order} where id = #{id}")
+    int updateById(FriendLink friendLinkFromDb);
 }

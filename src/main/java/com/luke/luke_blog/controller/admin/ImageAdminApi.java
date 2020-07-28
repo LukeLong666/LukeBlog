@@ -1,7 +1,13 @@
 package com.luke.luke_blog.controller.admin;
 
 import com.luke.luke_blog.response.ResponseResult;
+import com.luke.luke_blog.service.IImageService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 图像管理api
@@ -13,14 +19,19 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/image")
 public class ImageAdminApi {
 
+    @Resource
+    private IImageService imageService;
+
     /**
      * 上传图片
      *
+     * @param file 文件
      * @return {@link ResponseResult}
      */
+    @PreAuthorize("@permission.admin()")
     @PostMapping
-    public ResponseResult uploadImage() {
-        return ResponseResult.SUCCESS(null);
+    public ResponseResult uploadImage(@RequestParam("file")MultipartFile file) {
+        return imageService.uploadImage(file);
     }
 
     /**
@@ -29,21 +40,12 @@ public class ImageAdminApi {
      * @param imageId 形象标识
      * @return {@link ResponseResult}
      */
+    @PreAuthorize("@permission.admin()")
     @DeleteMapping("/{imageId}")
     public ResponseResult deleteImage(@PathVariable("imageId") String imageId) {
-        return ResponseResult.SUCCESS(null);
+        return imageService.deleteImageById(imageId);
     }
 
-    /**
-     * 更新图片
-     *
-     * @param imageId 形象标识
-     * @return {@link ResponseResult}
-     */
-    @PutMapping("/{imageId}")
-    public ResponseResult updateImage(@PathVariable("imageId") String imageId) {
-        return ResponseResult.SUCCESS(null);
-    }
 
     /**
      * 得到图像
@@ -51,9 +53,10 @@ public class ImageAdminApi {
      * @param imageId 形象标识
      * @return {@link ResponseResult}
      */
+    @PreAuthorize("@permission.admin()")
     @GetMapping("/{imageId}")
-    public ResponseResult getImage(@PathVariable("imageId") String imageId) {
-        return ResponseResult.SUCCESS(null);
+    public void getImage(HttpServletResponse response, @PathVariable("imageId") String imageId) {
+        imageService.viewImage(response,imageId);
     }
 
     /**
@@ -63,8 +66,9 @@ public class ImageAdminApi {
      * @param size 大小
      * @return {@link ResponseResult}
      */
-    @GetMapping("/list")
-    public ResponseResult listImages(@RequestParam("page") int page,@RequestParam("size") int size) {
-        return ResponseResult.SUCCESS(null);
+    @PreAuthorize("@permission.admin()")
+    @GetMapping("/list/{page}/{size}")
+    public ResponseResult listImages(@PathVariable("page") int page,@PathVariable("size") int size) {
+        return imageService.listImages(page,size);
     }
 }

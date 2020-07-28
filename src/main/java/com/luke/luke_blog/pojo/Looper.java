@@ -12,8 +12,8 @@ public class Looper {
 
     private String id;
     private String title;
-    private Integer order;
-    private String state;
+    private Integer order=1;
+    private String state ="1";
     private String targetUrl;
     private String imageUrl;
     private Date createTime;
@@ -81,5 +81,19 @@ public class Looper {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @Override
+    public String toString() {
+        return "Looper{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", order=" + order +
+                ", state='" + state + '\'' +
+                ", targetUrl='" + targetUrl + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
     }
 }
