@@ -4,6 +4,7 @@ import com.luke.luke_blog.pojo.Setting;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * 设置映射器
@@ -20,7 +21,7 @@ public interface SettingsMapper {
      * @param key 关键
      * @return {@link Setting}
      */
-    @Select("select `value` from tb_settings where `key` = #{key}")
+    @Select("select * from tb_settings where `key` = #{key}")
     Setting findOneByKey(String key);
 
 
@@ -33,5 +34,8 @@ public interface SettingsMapper {
     @Insert("insert into " +
             "tb_settings(id,`key`,`value`,create_time,update_time) " +
             "values(#{id},#{key},#{value},#{createTime},#{updateTime})")
-    int sava(Setting setting);
+    int save(Setting setting);
+
+    @Update("update tb_settings set `value` = #{value},update_time = #{updateTime} where id = #{id}")
+    int updateById(Setting setting);
 }

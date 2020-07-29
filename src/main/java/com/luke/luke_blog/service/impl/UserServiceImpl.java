@@ -129,7 +129,7 @@ public class UserServiceImpl implements IUserService {
         setting.setUpdateTime(new Date());
         setting.setKey(Constants.Settings.MANAGER_ACCOUNT_INIT_STATE);
         setting.setValue("1");
-        int result2 = settingsDao.sava(setting);
+        int result2 = settingsDao.save(setting);
         if (result2 == 0) {
             return ResponseResult.FAILURE("添加失败!");
         }

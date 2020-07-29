@@ -1,7 +1,11 @@
 package com.luke.luke_blog.controller.admin;
 
 import com.luke.luke_blog.response.ResponseResult;
+import com.luke.luke_blog.service.IWebSizeInfoService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * 网页大小信息管理api
@@ -13,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/web_size_info")
 public class WebSizeInfoAdminApi {
 
+    @Resource
+    IWebSizeInfoService webSizeInfoService;
+
     /**
      * 得到网络大小标题
      *
@@ -20,7 +27,7 @@ public class WebSizeInfoAdminApi {
      */
     @GetMapping("/title")
     public ResponseResult getWebSizeTitle() {
-        return ResponseResult.SUCCESS(null);
+        return webSizeInfoService.getWebSizeTitle();
     }
 
     /**
@@ -29,9 +36,10 @@ public class WebSizeInfoAdminApi {
      * @param title 标题
      * @return {@link ResponseResult}
      */
+    @PreAuthorize("@permission.admin()")
     @PutMapping("/title")
     public ResponseResult updateWebSizeTitle(@RequestParam("title") String title) {
-        return ResponseResult.SUCCESS(null);
+        return webSizeInfoService.putWebSizeTitle(title);
     }
 
     /**
@@ -41,16 +49,24 @@ public class WebSizeInfoAdminApi {
      */
     @GetMapping("/seo")
     public ResponseResult getSeoInfo() {
-        return ResponseResult.SUCCESS(null);
+        return webSizeInfoService.getSeoInfo();
     }
 
+    /**
+     * 把seo信息
+     *
+     * @param keywords    关键字
+     * @param description 描述
+     * @return {@link ResponseResult}
+     */
+    @PreAuthorize("@permission.admin()")
     @PutMapping("/seo")
     public ResponseResult putSeoInfo(@RequestParam("keywords") String keywords, @RequestParam("description") String description) {
-        return ResponseResult.SUCCESS(null);
+        return webSizeInfoService.putSeoInfo(keywords,description);
     }
 
     @GetMapping("/view_count")
     public ResponseResult getWebSizeViewCount() {
-        return ResponseResult.SUCCESS(null);
+        return webSizeInfoService.getWebSizeViewCount();
     }
 }

@@ -25,6 +25,11 @@ public interface Constants {
 
     interface Settings {
         String MANAGER_ACCOUNT_INIT_STATE = "manager_account_init_state";
+        String WEB_SIZE_TITLE =  "web_size_title";
+        String WEB_SIZE_DESCRIPTION =  "web_size_description";
+        String WEB_SIZE_KEYWORDS =  "web_size_keywords";
+        String WEB_SIZE_VIEW_COUNT =  "web_size_view_count";
+
     }
 
     interface Page{

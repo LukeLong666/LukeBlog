@@ -55,4 +55,15 @@ public class Setting {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
+
+    @Override
+    public String toString() {
+        return "Setting{" +
+                "id='" + id + '\'' +
+                ", key='" + key + '\'' +
+                ", value='" + value + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
+    }
 }
