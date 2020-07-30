@@ -18,12 +18,23 @@ public class Article {
     private String categoryId;
     private String content;
     private String type;
-    private String state;
+    private String state="1";
     private String summary;
-    private String labels;
+    private String label;
+    private String cover;
     private Integer viewCount;
     private Date createTime;
     private Date updateTime;
+
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public String getId() {
         return id;
@@ -105,12 +116,12 @@ public class Article {
         this.summary = summary;
     }
 
-    public String getLabels() {
-        return labels;
+    public String getLabel() {
+        return label;
     }
 
-    public void setLabels(String labels) {
-        this.labels = labels;
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     public Integer getViewCount() {
@@ -135,5 +146,34 @@ public class Article {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getCover() {
+        return cover;
+    }
+
+    public void setCover(String cover) {
+        this.cover = cover;
+    }
+
+    @Override
+    public String toString() {
+        return "Article{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", userId='" + userId + '\'' +
+                ", userAvatar='" + userAvatar + '\'' +
+                ", userName='" + userName + '\'' +
+                ", categoryId='" + categoryId + '\'' +
+                ", content='" + content + '\'' +
+                ", type='" + type + '\'' +
+                ", state='" + state + '\'' +
+                ", summary='" + summary + '\'' +
+                ", labels='" + label + '\'' +
+                ", cover='" + cover + '\'' +
+                ", viewCount=" + viewCount +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
     }
 }
