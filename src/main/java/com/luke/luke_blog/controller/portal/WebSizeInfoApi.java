@@ -1,9 +1,15 @@
 package com.luke.luke_blog.controller.portal;
 
 import com.luke.luke_blog.response.ResponseResult;
+import com.luke.luke_blog.service.ICategoryService;
+import com.luke.luke_blog.service.IFriendLinkService;
+import com.luke.luke_blog.service.ILoopService;
+import com.luke.luke_blog.service.IWebSizeInfoService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * web大小信息api
@@ -15,14 +21,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/portal/web_size_info")
 public class WebSizeInfoApi {
 
+    @Resource
+    private ICategoryService categoryService;
+
+    @Resource
+    private IFriendLinkService friendLinkService;
+
+    @Resource
+    private ILoopService loopService;
+
+    @Resource
+    private IWebSizeInfoService webSizeInfoService;
+
     /**
      * 得到categores
      *
      * @return {@link ResponseResult}
      */
     @GetMapping("/categories")
-    public ResponseResult getCategores() {
-        return ResponseResult.SUCCESS(null);
+    public ResponseResult getCategories() {
+        return categoryService.listCategories();
     }
 
     /**
@@ -32,7 +50,7 @@ public class WebSizeInfoApi {
      */
     @GetMapping("/title")
     public ResponseResult getTitle() {
-        return ResponseResult.SUCCESS(null);
+        return webSizeInfoService.getWebSizeTitle();
     }
 
     /**
@@ -42,7 +60,7 @@ public class WebSizeInfoApi {
      */
     @GetMapping("/view_count")
     public ResponseResult getViewCount() {
-        return ResponseResult.SUCCESS(null);
+        return webSizeInfoService.getWebSizeViewCount();
     }
 
     /**
@@ -52,7 +70,7 @@ public class WebSizeInfoApi {
      */
     @GetMapping("/seo")
     public ResponseResult getSeo() {
-        return ResponseResult.SUCCESS(null);
+        return webSizeInfoService.getSeoInfo();
     }
 
     /**
@@ -62,7 +80,7 @@ public class WebSizeInfoApi {
      */
     @GetMapping("/loop")
     public ResponseResult getLoops() {
-        return ResponseResult.SUCCESS(null);
+        return loopService.listLoopers();
     }
 
     /**
@@ -72,6 +90,6 @@ public class WebSizeInfoApi {
      */
     @GetMapping("/friend_link")
     public ResponseResult getLinks() {
-        return ResponseResult.SUCCESS(null);
+        return friendLinkService.listFriendLinks();
     }
 }

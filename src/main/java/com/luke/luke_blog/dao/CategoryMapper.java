@@ -29,6 +29,9 @@ public interface CategoryMapper {
     @Select("select * from tb_categories order by create_time DESC")
     List<Category> findAll();
 
+    @Select("select * from tb_categories where status=#{status} order by create_time DESC")
+    List<Category> findAllByStatus(String status);
+
     @Update("update tb_categories set name=#{name},description=#{description},pinyin=#{pinyin},`order`=#{order} where id = #{id}")
     int updateById(Category categoryFromDb);
 

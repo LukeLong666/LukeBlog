@@ -72,13 +72,11 @@ public class FriendLinkAdminApi {
     /**
      * 朋友链接列表
      *
-     * @param page 页面
-     * @param size 大小
      * @return {@link ResponseResult}
      */
     @PreAuthorize("@permission.admin()")
-    @GetMapping("/list/{page}/{size}")
-    public ResponseResult listFriendLinks(@PathVariable("page") int page,@PathVariable("size") int size) {
-        return friendLinkService.listFriendLinks(page,size);
+    @GetMapping("/list")
+    public ResponseResult listFriendLinks() {
+        return friendLinkService.listFriendLinks();
     }
 }

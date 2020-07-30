@@ -15,8 +15,11 @@ public interface FriendLinkMapper {
     @Select("select * from tb_friends where id = #{friendLinkId} and state='1'")
     FriendLink findOneById(String friendLinkId);
 
-    @Select("select * from tb_friends where state='1'")
+    @Select("select * from tb_friends")
     List<FriendLink> findAll();
+
+    @Select("select * from tb_friends where state='1'")
+    List<FriendLink> findAllByState(String state);
 
     @Delete("delete from tb_friends where id = #{id}")
     int deleteById(String id);

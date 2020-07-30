@@ -1,11 +1,11 @@
 package com.luke.luke_blog.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.luke.luke_blog.dao.CategoryMapper;
 import com.luke.luke_blog.pojo.Category;
+import com.luke.luke_blog.pojo.User;
 import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.ICategoryService;
+import com.luke.luke_blog.service.IUserService;
 import com.luke.luke_blog.utils.Constants;
 import com.luke.luke_blog.utils.IdWorker;
 import com.luke.luke_blog.utils.TextUtils;
@@ -31,6 +31,9 @@ public class CategoryServiceImpl implements ICategoryService {
 
     @Resource
     private IdWorker idWorker;
+
+    @Resource
+    private IUserService userService;
 
     @Override
     public ResponseResult addCategory(Category category) {
@@ -74,23 +77,21 @@ public class CategoryServiceImpl implements ICategoryService {
     }
 
     @Override
-    public ResponseResult listCategories(int page, int size) {
-        //获取分类列表
-        if (page < Constants.Page.DEFAULT_PAGE) {
-            log.info(TAG+" listCategories() --> page < Constants.Page.DEFAULT_PAGE : "+true);
-            page = Constants.Page.DEFAULT_PAGE;
+    public ResponseResult listCategories() {
+        //判断用户类型,普通和未等陆的用户,只能,获取正常的分类
+        User user = userService.checkUser();
+        List<Category> categoryList = null;
+        if (user == null||!Constants.User.ROLES_ADMIN.equals(user.getRoles())) {
+            //普通和未等陆的用户
+            //获取正常的
+            categoryList = categoryDao.findAllByStatus("1");
+        }else{
+            //管理员用户
+            categoryList = categoryDao.findAll();
         }
-        if (size < Constants.Page.MIN_SIZE) {
-            log.info(TAG+" listCategories() --> size < Constants.Page.MIN_SIZE : "+true);
-            size = Constants.Page.MIN_SIZE;
-        }
-        PageHelper.startPage(page, size);
-        List<Category> categoryList = categoryDao.findAll();
         log.info(TAG+" listCategories() --> categoryList : "+categoryList);
-        PageInfo<Category> pageInfo = new PageInfo<>(categoryList);
-        log.info(TAG+" listCategories() --> pageInfo : "+pageInfo);
         log.info(TAG+" listCategories() --> ResponseResult : "+"查询成功");
-        return ResponseResult.SUCCESS("获取分类列表成功!", pageInfo);
+        return ResponseResult.SUCCESS("获取分类列表成功!", categoryList);
     }
 
     @Override

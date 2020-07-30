@@ -31,11 +31,9 @@ public interface ICategoryService {
     /**
      * 类别列表
      *
-     * @param page 页面
-     * @param size 大小
      * @return {@link ResponseResult}
      */
-    ResponseResult listCategories(int page, int size);
+    ResponseResult listCategories();
 
     /**
      * 更新类别

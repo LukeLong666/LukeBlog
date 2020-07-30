@@ -46,8 +46,8 @@ public class LooperAdminApi {
     }
 
     @PreAuthorize("@permission.admin()")
-    @GetMapping("/list/{page}/{size}")
-    public ResponseResult listLoopers(@PathVariable("page") int page,@PathVariable("size") int size) {
-        return loopService.listLoopers(page,size);
+    @GetMapping("/list")
+    public ResponseResult listLoopers() {
+        return loopService.listLoopers();
     }
 }

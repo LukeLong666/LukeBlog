@@ -13,8 +13,11 @@ public interface LooperMapper {
             "values(#{id},#{title},#{order},#{targetUrl},#{imageUrl},#{createTime},#{updateTime})")
     int save(Looper looper);
 
-    @Select("select * from tb_looper where state = '1'")
+    @Select("select * from tb_looper")
     List<Looper> findAll();
+
+    @Select("select * from tb_looper where state = #{state}")
+    List<Looper> findAllByState(String state);
 
     @Select("select * from tb_looper where state = '1' and id=#{looperId}")
     Looper findOneById(String looperId);

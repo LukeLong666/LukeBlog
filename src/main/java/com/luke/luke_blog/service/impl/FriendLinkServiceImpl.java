@@ -1,11 +1,11 @@
 package com.luke.luke_blog.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.luke.luke_blog.dao.FriendLinkMapper;
 import com.luke.luke_blog.pojo.FriendLink;
+import com.luke.luke_blog.pojo.User;
 import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.IFriendLinkService;
+import com.luke.luke_blog.service.IUserService;
 import com.luke.luke_blog.utils.Constants;
 import com.luke.luke_blog.utils.IdWorker;
 import com.luke.luke_blog.utils.TextUtils;
@@ -31,6 +31,9 @@ public class FriendLinkServiceImpl implements IFriendLinkService {
 
     @Resource
     private FriendLinkMapper friendLinkDao;
+
+    @Resource
+    private IUserService userService;
 
     @Override
     public ResponseResult addFriendLink(FriendLink friendLink) {
@@ -75,23 +78,20 @@ public class FriendLinkServiceImpl implements IFriendLinkService {
     }
 
     @Override
-    public ResponseResult listFriendLinks(int page, int size) {
+    public ResponseResult listFriendLinks() {
         //获取分类列表
-        if (page < Constants.Page.DEFAULT_PAGE) {
-            log.info(TAG+" listFriendLinks() --> page < Constants.Page.DEFAULT_PAGE : "+true);
-            page = Constants.Page.DEFAULT_PAGE;
+        User user = userService.checkUser();
+        List<FriendLink> friendLinkList = null;
+        if (user == null||!Constants.User.ROLES_ADMIN.equals(user.getRoles())) {
+            //普通或未等陆用户
+            friendLinkList = friendLinkDao.findAllByState("1");
+        }else {
+            //管理员
+            friendLinkList = friendLinkDao.findAll();
         }
-        if (size < Constants.Page.MIN_SIZE) {
-            log.info(TAG+" listFriendLinks() --> size < Constants.Page.MIN_SIZE : "+true);
-            size = Constants.Page.MIN_SIZE;
-        }
-        PageHelper.startPage(page, size);
-        List<FriendLink> friendLinkList = friendLinkDao.findAll();
         log.info(TAG+" listFriendLinks() --> categoryList : "+friendLinkList);
-        PageInfo<FriendLink> pageInfo = new PageInfo<>(friendLinkList);
-        log.info(TAG+" listFriendLinks() --> pageInfo : "+pageInfo);
         log.info(TAG+" listFriendLinks() --> ResponseResult : "+"查询成功");
-        return ResponseResult.SUCCESS("获取友情链接列表成功!", pageInfo);
+        return ResponseResult.SUCCESS("获取友情链接列表成功!", friendLinkList);
     }
 
     @Override

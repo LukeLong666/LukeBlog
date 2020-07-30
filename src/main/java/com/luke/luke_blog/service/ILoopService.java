@@ -27,7 +27,7 @@ public interface ILoopService {
      * @param size 大小
      * @return {@link ResponseResult}
      */
-    ResponseResult listLoopers(int page, int size);
+    ResponseResult listLoopers();
 
     /**
      * 更新电影

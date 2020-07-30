@@ -33,7 +33,7 @@ public interface IFriendLinkService {
      * @param size 大小
      * @return {@link ResponseResult}
      */
-    ResponseResult listFriendLinks(int page, int size);
+    ResponseResult listFriendLinks();
 
     /**
      * 删除通过id

@@ -1,11 +1,11 @@
 package com.luke.luke_blog.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.luke.luke_blog.dao.LooperMapper;
 import com.luke.luke_blog.pojo.Looper;
+import com.luke.luke_blog.pojo.User;
 import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.ILoopService;
+import com.luke.luke_blog.service.IUserService;
 import com.luke.luke_blog.utils.Constants;
 import com.luke.luke_blog.utils.IdWorker;
 import com.luke.luke_blog.utils.TextUtils;
@@ -31,6 +31,9 @@ public class LoopServiceImpl implements ILoopService {
 
     @Resource
     private LooperMapper looperDao;
+
+    @Resource
+    private IUserService userService;
 
     @Override
     public ResponseResult addLooper(Looper looper) {
@@ -74,18 +77,18 @@ public class LoopServiceImpl implements ILoopService {
     }
 
     @Override
-    public ResponseResult listLoopers(int page, int size) {
-        if (page < Constants.Page.DEFAULT_PAGE) {
-            page = Constants.Page.DEFAULT_PAGE;
+    public ResponseResult listLoopers() {
+        User user = userService.checkUser();
+        List<Looper> looperList = null;
+        if (user == null||!Constants.User.ROLES_ADMIN.equals(user.getRoles())) {
+            //普通或未等陆用户
+            looperList = looperDao.findAllByState("1");
+        }else {
+            //管理员
+            looperList = looperDao.findAll();
         }
-        if (size < Constants.Page.MIN_SIZE) {
-            size = Constants.Page.MIN_SIZE;
-        }
-        PageHelper.startPage(page, size);
-        List<Looper> looperList = looperDao.findAll();
-        PageInfo<Looper> pageInfo = new PageInfo<>(looperList);
-        log.info("PageInfo =====> "+pageInfo.toString());
-        return ResponseResult.SUCCESS("查询成功!", pageInfo);
+        log.info("PageInfo =====> "+looperList);
+        return ResponseResult.SUCCESS("查询成功!", looperList);
     }
 
     @Override
