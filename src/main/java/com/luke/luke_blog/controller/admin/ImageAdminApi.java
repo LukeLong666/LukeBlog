@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * 图像管理api
@@ -44,19 +43,6 @@ public class ImageAdminApi {
     @DeleteMapping("/{imageId}")
     public ResponseResult deleteImage(@PathVariable("imageId") String imageId) {
         return imageService.deleteImageById(imageId);
-    }
-
-
-    /**
-     * 得到图像
-     *
-     * @param imageId 形象标识
-     * @return {@link ResponseResult}
-     */
-    @PreAuthorize("@permission.admin()")
-    @GetMapping("/{imageId}")
-    public void getImage(HttpServletResponse response, @PathVariable("imageId") String imageId) {
-        imageService.viewImage(response,imageId);
     }
 
     /**
