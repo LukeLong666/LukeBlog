@@ -115,7 +115,7 @@ public class ImageServiceImpl implements IImageService {
         String targetPath = dayPath+File.separator+type+File.separator+ID+"."+ type;
         File targetFile = new File(targetPath);
         if (!targetFile.getParentFile().exists()) {
-            targetFile.mkdirs();
+            targetFile.getParentFile().mkdirs();
         }
         log.info(TAG+" uploadImage() --> targetFile : "+targetFile);
         //保存文件

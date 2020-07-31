@@ -106,7 +106,7 @@ public class CommentServiceImpl implements ICommentService {
         //把评论拿出来
         Comment comment = commentDao.findOneById(commentId);
         if (comment == null) {
-            return ResponseResult.ACCOUNT_NOT_LOGIN("评论不存在");
+            return ResponseResult.FAILURE("评论不存在");
         }
         //当该评论是自己的,或者当前登录的用户是管理员才可以删除
         if (user.getId().equals(comment.getUserId())||Constants.User.ROLES_ADMIN.equals(user.getRoles())) {
