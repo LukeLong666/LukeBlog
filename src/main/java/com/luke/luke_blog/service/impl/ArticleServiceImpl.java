@@ -3,7 +3,9 @@ package com.luke.luke_blog.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.luke.luke_blog.dao.ArticleMapper;
+import com.luke.luke_blog.dao.LabelMapper;
 import com.luke.luke_blog.pojo.Article;
+import com.luke.luke_blog.pojo.Label;
 import com.luke.luke_blog.pojo.User;
 import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.IArticleService;
@@ -17,8 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service("articleService")
 @Transactional
@@ -37,6 +38,11 @@ public class ArticleServiceImpl implements IArticleService {
     @Resource
     private ArticleMapper articleDao;
 
+    @Resource
+    private Random random;
+
+    @Resource
+    private LabelMapper labelDao;
 
     /**
      * 发布文章
@@ -82,8 +88,6 @@ public class ArticleServiceImpl implements IArticleService {
             //不支持该操作
             return ResponseResult.FAILURE("不支持该操作");
         }
-
-
         //以下检查是发布的检查
         if (Constants.Article.STATE_PUBLISH.equals(state)) {
             //分类
@@ -102,7 +106,7 @@ public class ArticleServiceImpl implements IArticleService {
                 return ResponseResult.FAILURE("摘要过长");
             }
             //标签
-            if (TextUtils.isEmpty(article.getLabel())) {
+            if (TextUtils.isEmpty(article.getLabels())) {
                 return ResponseResult.FAILURE("标签不可以为空");
             }
         }
@@ -128,12 +132,36 @@ public class ArticleServiceImpl implements IArticleService {
         //保存数据库
         int result = articleDao.save(article);
         log.info(TAG+" postArticle() ---> result: "+result);
+        //打散标签,标签入库
+        this.setupLabels(article.getLabels());
         // TODO: 2020/7/29 保存到搜索数据库
         //返回结果
         if (Constants.Article.STATE_DRAFT.equals(state)) {
             return result>0?ResponseResult.SUCCESS("草稿保存成功",article.getId()):ResponseResult.FAILURE("草稿保存失败");
         }
         return result>0?ResponseResult.SUCCESS("发布成功",article.getId()):ResponseResult.FAILURE("发布失败");
+    }
+
+    private void setupLabels(String labels) {
+        List<String> labelList = new ArrayList<>();
+        if(labels.contains("-")){
+            labelList.addAll(Arrays.asList(labels.split("-")));
+        }else{
+            labelList.add(labels);
+        }
+        //入库统计
+        for (String label : labelList) {
+            int result = labelDao.updateCountByName(label);
+            if (result == 0) {
+                Label labelFromDb = new Label();
+                labelFromDb.setId(idWorker.nextId() + "");
+                labelFromDb.setCount(1);
+                labelFromDb.setName(label);
+                labelFromDb.setCreateTime(new Date());
+                labelFromDb.setUpdateTime(new Date());
+                labelDao.save(labelFromDb);
+            }
+        }
     }
 
     /**
@@ -173,13 +201,16 @@ public class ArticleServiceImpl implements IArticleService {
         }
         //判断文章状态
         String state = articleFromDb.getState();
-        if (Constants.Article.STATE_PUBLISH.equals(state)||Constants.Article.STATE_TOP.equals(state)) {
-            return ResponseResult.SUCCESS("查询成功", articleFromDb);
-        }
         User user = userService.checkUser();
-        if (!Constants.User.ROLES_ADMIN.equals(user.getRoles())) {
-            return ResponseResult.PERMISSION_DENY("无权访问");
+        if (user==null||!Constants.User.ROLES_ADMIN.equals(user.getRoles())) {
+            //普通用户
+            if (Constants.Article.STATE_PUBLISH.equals(state)||Constants.Article.STATE_TOP.equals(state)) {
+                return ResponseResult.SUCCESS("查询成功", articleFromDb);
+            }else{
+                return ResponseResult.FAILURE("文章不存在");
+            }
         }
+        //管理员
         return ResponseResult.SUCCESS("查询成功", articleFromDb);
     }
 
@@ -205,8 +236,8 @@ public class ArticleServiceImpl implements IArticleService {
         if (!TextUtils.isEmpty(article.getContent())) {
             articleFromDb.setContent(article.getContent());
         }
-        if (!TextUtils.isEmpty(article.getLabel())) {
-            articleFromDb.setLabel(article.getLabel());
+        if (!TextUtils.isEmpty(article.getLabels())) {
+            articleFromDb.setLabels(article.getLabels());
         }
         if (!TextUtils.isEmpty(article.getCategoryId())) {
             articleFromDb.setCategoryId(article.getCategoryId());
@@ -224,5 +255,49 @@ public class ArticleServiceImpl implements IArticleService {
     public ResponseResult deleteArticle(String articleId) {
         int result = articleDao.deleteById(articleId);
         return result>0?ResponseResult.SUCCESS("删除成功",result):ResponseResult.FAILURE("文章不存在");
+    }
+
+    @Override
+    public ResponseResult listRecommendArticle(String articleId, int size) {
+        //查询文章
+        String labels = articleDao.findOneWithLabelById(articleId);
+        List<String> label = new ArrayList<>();
+        if (!labels.contains("-")) {
+            label.add(labels);
+        }else{
+            String[] split = labels.split("-");
+            label.addAll(Arrays.asList(split));
+        }
+        String labelSQL = label.get(random.nextInt(label.size()));
+        List<Article> listArticles = articleDao.findAllByLabel(labelSQL,articleId,size);
+        return ResponseResult.SUCCESS("查询成功", listArticles);
+    }
+
+    @Override
+    public ResponseResult listArticleByLabel(int page, int size, String label) {
+        if (page < Constants.Page.DEFAULT_PAGE) {
+            page = Constants.Page.DEFAULT_PAGE;
+        }
+        if (size < Constants.Page.MIN_SIZE) {
+            size = Constants.Page.MIN_SIZE;
+        }
+        PageHelper.startPage(page, size);
+        List<Article> listArticles = articleDao.findAllWithLabel(label);
+        PageInfo<Article> pageInfo = new PageInfo<>(listArticles);
+        log.info("PageInfo =====> "+pageInfo.toString());
+        return ResponseResult.SUCCESS("查询成功!", pageInfo);
+    }
+
+    @Override
+    public ResponseResult listLabels(int size) {
+        if (size < Constants.Page.MIN_SIZE) {
+            size = Constants.Page.MIN_SIZE;
+        }
+        PageHelper.startPage(1, size);
+        List<Label> labelList = labelDao.findAll();
+        PageInfo<Label> pageInfo = new PageInfo<>(labelList);
+        log.info("PageInfo =====> "+pageInfo.toString());
+        return ResponseResult.SUCCESS("查询成功!", pageInfo);
+
     }
 }

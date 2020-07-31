@@ -20,7 +20,7 @@ public class Article {
     private String type;
     private String state="1";
     private String summary;
-    private String label;
+    private String labels;
     private String cover;
     private Integer viewCount;
     private Date createTime;
@@ -116,12 +116,12 @@ public class Article {
         this.summary = summary;
     }
 
-    public String getLabel() {
-        return label;
+    public String getLabels() {
+        return labels;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
+    public void setLabels(String labels) {
+        this.labels = labels;
     }
 
     public Integer getViewCount() {
@@ -169,7 +169,7 @@ public class Article {
                 ", type='" + type + '\'' +
                 ", state='" + state + '\'' +
                 ", summary='" + summary + '\'' +
-                ", labels='" + label + '\'' +
+                ", labels='" + labels + '\'' +
                 ", cover='" + cover + '\'' +
                 ", viewCount=" + viewCount +
                 ", createTime=" + createTime +

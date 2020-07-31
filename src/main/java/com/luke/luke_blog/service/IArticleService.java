@@ -53,4 +53,31 @@ public interface IArticleService {
      * @return {@link ResponseResult}
      */
     ResponseResult deleteArticle(String articleId);
+
+    /**
+     * 推荐文章列表
+     *
+     * @param articleId 文章的id
+     * @param size      大小
+     * @return {@link ResponseResult}
+     */
+    ResponseResult listRecommendArticle(String articleId, int size);
+
+    /**
+     * 本文由标签列表
+     *
+     * @param page         页面
+     * @param size         大小
+     * @param statePublish 国家发布
+     * @return {@link ResponseResult}
+     */
+    ResponseResult listArticleByLabel(int page, int size, String label);
+
+    /**
+     * 列表标签
+     *
+     * @param size 大小
+     * @return {@link ResponseResult}
+     */
+    ResponseResult listLabels(int size);
 }
