@@ -65,4 +65,10 @@ public interface Constants {
         String STATE_DRAFT = "2";
         String STATE_TOP = "3";
     }
+
+    interface Comment{
+        String STATE_DELETE = "0";
+        String STATE_PUBLISH = "1";
+        String STATE_TOP = "3";
+    }
 }

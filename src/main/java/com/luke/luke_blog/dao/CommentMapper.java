@@ -1,10 +1,7 @@
 package com.luke.luke_blog.dao;
 
 import com.luke.luke_blog.pojo.Comment;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -21,12 +18,18 @@ public interface CommentMapper {
             " values(#{id},#{parentContent},#{articleId},#{content},#{userId},#{userAvatar},#{userName},#{state},#{createTime},#{updateTime})")
     int save(Comment comment);
 
-    @Select("select * from tb_comment where article_id = #{articleId} order by create_time")
-    List<Comment> findAll(String articleId);
+    @Select("select * from tb_comment where article_id = #{articleId} order by state desc")
+    List<Comment> findAllByArticleId(String articleId);
+
+    @Select("select * from tb_comment order by state desc")
+    List<Comment> findAll();
 
     @Select("select * from tb_comment where id = #{commentId}")
     Comment findOneById(String commentId);
 
     @Delete("delete from tb_comment where id =#{id}")
     int deleteById(String id);
+
+    @Update("update set `state`=#{state} where id = #{id}")
+    int updateStateById(Comment comment);
 }

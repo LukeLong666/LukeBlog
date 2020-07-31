@@ -1,7 +1,11 @@
 package com.luke.luke_blog.controller.admin;
 
 import com.luke.luke_blog.response.ResponseResult;
+import com.luke.luke_blog.service.ICommentService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * 图像管理api
@@ -13,19 +17,26 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/comment")
 public class CommentAdminApi {
 
+    @Resource
+    private ICommentService commentService;
+
+    @PreAuthorize("@permission.admin()")
     @DeleteMapping("/{commentId}")
     public ResponseResult deleteComment(@PathVariable("commentId") String commentId) {
-        return ResponseResult.SUCCESS(null);
+        return commentService.deleteCommentById(commentId);
     }
 
 
-    @GetMapping("/list")
-    public ResponseResult listComments(@RequestParam("page") int page,@RequestParam("size") int size) {
-        return ResponseResult.SUCCESS(null);
+    @PreAuthorize("@permission.admin()")
+    @GetMapping("/list/{page}/{size}")
+    public ResponseResult listComments(@PathVariable("page") int page, @PathVariable("size") int size) {
+        return commentService.listComment(page,size);
     }
 
+    @PreAuthorize("@permission.admin()")
     @PutMapping("/top/{commentId}")
     public ResponseResult topComment(@PathVariable("commentId") String commentId) {
-        return ResponseResult.SUCCESS(null);
+        return commentService.topComment(commentId);
     }
+
 }

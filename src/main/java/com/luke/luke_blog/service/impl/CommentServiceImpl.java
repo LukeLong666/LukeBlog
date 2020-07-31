@@ -62,7 +62,7 @@ public class CommentServiceImpl implements ICommentService {
         }
         //补全数据
         comment.setId(idWorker.nextId() + "");
-        comment.setState("1");
+        comment.setState(Constants.Comment.STATE_PUBLISH);
         comment.setUpdateTime(new Date());
         comment.setCreateTime(new Date());
         comment.setUserName(user.getUserName());
@@ -91,7 +91,23 @@ public class CommentServiceImpl implements ICommentService {
             size = Constants.Page.MIN_SIZE;
         }
         PageHelper.startPage(page, size);
-        List<Comment> listArticles = commentDao.findAll(articleId);
+        List<Comment> listArticles = commentDao.findAllByArticleId(articleId);
+        PageInfo<Comment> pageInfo = new PageInfo<>(listArticles);
+        log.info("PageInfo =====> "+pageInfo.toString());
+        return ResponseResult.SUCCESS("查询成功!", pageInfo);
+    }
+
+    @Override
+    public ResponseResult listComment(int page,int size) {
+        //获取用户列表
+        if (page < Constants.Page.DEFAULT_PAGE) {
+            page = Constants.Page.DEFAULT_PAGE;
+        }
+        if (size < Constants.Page.MIN_SIZE) {
+            size = Constants.Page.MIN_SIZE;
+        }
+        PageHelper.startPage(page, size);
+        List<Comment> listArticles = commentDao.findAll();
         PageInfo<Comment> pageInfo = new PageInfo<>(listArticles);
         log.info("PageInfo =====> "+pageInfo.toString());
         return ResponseResult.SUCCESS("查询成功!", pageInfo);
@@ -114,5 +130,25 @@ public class CommentServiceImpl implements ICommentService {
             return deleteResult>0?ResponseResult.SUCCESS("评论删除成功",deleteResult):ResponseResult.FAILURE("未知错误,删除失败");
         }
         return ResponseResult.PERMISSION_DENY("无权访问");
+    }
+
+    @Override
+    public ResponseResult topComment(String commentId) {
+        Comment comment = commentDao.findOneById(commentId);
+        if (comment == null) {
+            return ResponseResult.FAILURE("该评论不存在");
+        }
+        String state = comment.getState();
+        if (Constants.Comment.STATE_PUBLISH.equals(state)) {
+            comment.setState(Constants.Comment.STATE_TOP);
+            int result = commentDao.updateStateById(comment);
+            return result > 0 ? ResponseResult.SUCCESS("置顶成功") : ResponseResult.FAILURE("置顶失败");
+        } else if (Constants.Comment.STATE_TOP.equals(state)) {
+            comment.setState(Constants.Comment.STATE_PUBLISH);
+            int result = commentDao.updateStateById(comment);
+            return result > 0 ? ResponseResult.SUCCESS("取消置顶成功") : ResponseResult.FAILURE("取消置顶失败");
+        } else{
+            return ResponseResult.FAILURE("未知错误,请重试");
+        }
     }
 }

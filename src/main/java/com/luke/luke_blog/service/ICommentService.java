@@ -21,10 +21,28 @@ public interface ICommentService {
     ResponseResult listComment(String articleId,int page,int size);
 
     /**
+     * 评论列表
+     *
+     * @param page 页面
+     * @param size 大小
+     * @return {@link ResponseResult}
+     */
+    ResponseResult listComment(int page, int size);
+
+    /**
      * 通过id删除评论
      *
      * @param commentId 评论id
      * @return {@link ResponseResult}
      */
     ResponseResult deleteCommentById(String commentId);
+
+
+    /**
+     * 前评论
+     *
+     * @param commentId 评论id
+     * @return {@link ResponseResult}
+     */
+    ResponseResult topComment(String commentId);
 }
