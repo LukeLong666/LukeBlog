@@ -40,4 +40,9 @@ public interface IWebSizeInfoService {
      * @return {@link ResponseResult}
      */
     ResponseResult getWebSizeViewCount();
+
+    /**
+     * 更新视图数
+     */
+    void updateViewCount();
 }

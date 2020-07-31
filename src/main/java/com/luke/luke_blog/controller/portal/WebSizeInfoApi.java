@@ -6,6 +6,7 @@ import com.luke.luke_blog.service.IFriendLinkService;
 import com.luke.luke_blog.service.ILoopService;
 import com.luke.luke_blog.service.IWebSizeInfoService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -91,5 +92,19 @@ public class WebSizeInfoApi {
     @GetMapping("/friend_link")
     public ResponseResult getLinks() {
         return friendLinkService.listFriendLinks();
+    }
+
+    /**
+     * 访问量
+     * 每个页面点击一次,访问量就加一
+     * 根据ip进行过滤
+     *
+     * 不会每次都更新到mysql,只有获取访问量的时候,才更新mysql数据库
+     *
+     *
+     */
+    @PutMapping("/viewCount")
+    public void updateViewCount() {
+        webSizeInfoService.updateViewCount();
     }
 }

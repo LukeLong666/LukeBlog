@@ -6,6 +6,7 @@ import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.IWebSizeInfoService;
 import com.luke.luke_blog.utils.Constants;
 import com.luke.luke_blog.utils.IdWorker;
+import com.luke.luke_blog.utils.RedisUtil;
 import com.luke.luke_blog.utils.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,18 +137,52 @@ public class WebSizeInfoServiceImpl implements IWebSizeInfoService {
      */
     @Override
     public ResponseResult getWebSizeViewCount() {
-        Setting setting = settingsDao.findOneByKey(Constants.Settings.WEB_SIZE_VIEW_COUNT);
-        if(setting==null){
-            setting = new Setting();
-            setting.setId(idWorker.nextId() + "");
-            setting.setKey(Constants.Settings.WEB_SIZE_VIEW_COUNT);
-            setting.setCreateTime(new Date());
-            setting.setUpdateTime(new Date());
-            setting.setValue("1");
-            settingsDao.save(setting);
+        //先从redis拿出来
+        String viewCountStr = (String) redisUtil.get(Constants.Settings.WEB_SIZE_VIEW_COUNT);
+        Setting viewCount = settingsDao.findOneByKey(Constants.Settings.WEB_SIZE_VIEW_COUNT);
+        if(viewCount==null){
+            viewCount = new Setting();
+            viewCount.setId(idWorker.nextId() + "");
+            viewCount.setKey(Constants.Settings.WEB_SIZE_VIEW_COUNT);
+            viewCount.setCreateTime(new Date());
+            viewCount.setUpdateTime(new Date());
+            viewCount.setValue("1");
+            settingsDao.save(viewCount);
+        }
+        if (TextUtils.isEmpty(viewCountStr)) {
+            viewCountStr = viewCount.getValue();
+            redisUtil.set(Constants.Settings.WEB_SIZE_VIEW_COUNT, viewCountStr);
+        }else{
+            //把redis更新到数据酷
+            viewCount.setValue(viewCountStr);
+            settingsDao.updateById(viewCount);
         }
         Map<String, Integer> result = new HashMap<>();
-        result.put(setting.getKey(), Integer.valueOf(setting.getValue()));
+        result.put(viewCount.getKey(), Integer.valueOf(viewCount.getValue()));
         return ResponseResult.SUCCESS("获取成功",result);
+    }
+
+    @Resource
+    private RedisUtil redisUtil;
+
+    @Override
+    public void updateViewCount() {
+        //redis
+        Object viewCount = redisUtil.get(Constants.Settings.WEB_SIZE_VIEW_COUNT);
+        if (viewCount == null) {
+            Setting viewCountFromDb = settingsDao.findOneByKey(Constants.Settings.WEB_SIZE_VIEW_COUNT);
+            if (viewCountFromDb == null) {
+                viewCountFromDb = new Setting();
+                viewCountFromDb.setId(idWorker.nextId() + "");
+                viewCountFromDb.setKey(Constants.Settings.WEB_SIZE_VIEW_COUNT);
+                viewCountFromDb.setCreateTime(new Date());
+                viewCountFromDb.setUpdateTime(new Date());
+                viewCountFromDb.setValue("1");
+                settingsDao.save(viewCountFromDb);
+            }
+            String viewCountValue = viewCountFromDb.getValue();
+            redisUtil.set(Constants.Settings.WEB_SIZE_VIEW_COUNT, viewCountValue);
+        }
+        redisUtil.incr(Constants.Settings.WEB_SIZE_VIEW_COUNT, 1);
     }
 }
