@@ -2,7 +2,10 @@ package com.luke.luke_blog.controller.portal;
 
 import com.luke.luke_blog.pojo.Comment;
 import com.luke.luke_blog.response.ResponseResult;
+import com.luke.luke_blog.service.ICommentService;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * 评论门户api
@@ -14,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/portal/comment")
 public class CommentPortalApi {
 
+    @Resource
+    private ICommentService commentService;
+
     /**
      * 文章评论
      *
@@ -22,7 +28,7 @@ public class CommentPortalApi {
      */
     @PostMapping
     public ResponseResult postComment(@RequestBody Comment comment) {
-        return ResponseResult.SUCCESS(null);
+        return commentService.postComment(comment);
     }
 
     /**
@@ -33,7 +39,7 @@ public class CommentPortalApi {
      */
     @DeleteMapping("/{commentId}")
     public ResponseResult deleteComment(@PathVariable("commentId") String commentId) {
-        return ResponseResult.SUCCESS(null);
+        return commentService.deleteCommentById(commentId);
     }
 
     /**
@@ -42,8 +48,8 @@ public class CommentPortalApi {
      * @param articleId 文章的id
      * @return {@link ResponseResult}
      */
-    @GetMapping("/list/{articleId}")
-    public ResponseResult listComment(@PathVariable("articleId") String articleId) {
-        return ResponseResult.SUCCESS(null);
+    @GetMapping("/list/{articleId}/{size}/{page}")
+    public ResponseResult listComment(@PathVariable("articleId") String articleId,@PathVariable("page") int page,@PathVariable("size") int size) {
+        return commentService.listComment(articleId,page,size);
     }
 }
