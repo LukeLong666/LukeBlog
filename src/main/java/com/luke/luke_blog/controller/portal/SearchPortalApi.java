@@ -1,10 +1,13 @@
 package com.luke.luke_blog.controller.portal;
 
 import com.luke.luke_blog.response.ResponseResult;
+import com.luke.luke_blog.service.IArticleService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * 搜索门户api
@@ -16,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/portal/search")
 public class SearchPortalApi {
 
+    @Resource
+    private IArticleService articleService;
+
     /**
      * 做搜索
      *
@@ -25,6 +31,6 @@ public class SearchPortalApi {
      */
     @GetMapping()
     public ResponseResult doSearch(@RequestParam("keyword") String keyword,@RequestParam("page") int page) {
-        return ResponseResult.SUCCESS(null);
+        return articleService.search(keyword,page);
     }
 }

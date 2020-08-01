@@ -8,6 +8,9 @@ package com.luke.luke_blog.utils;
  */
 public interface Constants {
 
+    String FROM_PC = "p_";
+    String FROM_MOBILE = "m_";
+
     int DEFAULT_SIZE = 30;
 
     interface User {
@@ -34,7 +37,7 @@ public interface Constants {
 
     interface Page{
         int DEFAULT_PAGE = 1;
-        int MIN_SIZE = 1;
+        int MIN_SIZE = 5;
     }
 
     interface ImageType {
@@ -64,11 +67,14 @@ public interface Constants {
         String STATE_PUBLISH = "1";
         String STATE_DRAFT = "2";
         String STATE_TOP = "3";
+        String KEY_ARTICLE_CACHE = "key_article_cache_";
+        String KEY_ARTICLE_VIEW_COUNT = "key_article_view_count_";
     }
 
     interface Comment{
         String STATE_DELETE = "0";
         String STATE_PUBLISH = "1";
         String STATE_TOP = "3";
+        String KEY_COMMENT_FIRST_PAGE_CACHE = "key_comment_first_page_cache_";
     }
 }

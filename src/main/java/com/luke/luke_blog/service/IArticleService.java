@@ -80,4 +80,13 @@ public interface IArticleService {
      * @return {@link ResponseResult}
      */
     ResponseResult listLabels(int size);
+
+    /**
+     * 搜索
+     *
+     * @param keyword 关键字
+     * @param page    页面
+     * @return {@link ResponseResult}
+     */
+    ResponseResult search(String keyword, int page);
 }

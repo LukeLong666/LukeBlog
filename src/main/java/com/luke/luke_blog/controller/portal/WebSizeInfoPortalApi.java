@@ -20,7 +20,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/portal/web_size_info")
-public class WebSizeInfoApi {
+public class WebSizeInfoPortalApi {
 
     @Resource
     private ICategoryService categoryService;
@@ -34,15 +34,7 @@ public class WebSizeInfoApi {
     @Resource
     private IWebSizeInfoService webSizeInfoService;
 
-    /**
-     * 得到categores
-     *
-     * @return {@link ResponseResult}
-     */
-    @GetMapping("/categories")
-    public ResponseResult getCategories() {
-        return categoryService.listCategories();
-    }
+
 
     /**
      * 获得冠军

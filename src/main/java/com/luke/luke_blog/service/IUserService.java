@@ -60,7 +60,7 @@ public interface IUserService {
      * @param response   响应
      * @return {@link ResponseResult}
      */
-    ResponseResult doLogin(String captcha, String captchaKey, User user, HttpServletRequest request, HttpServletResponse response);
+    ResponseResult doLogin(String captcha, String captchaKey, User user,String from,HttpServletRequest request, HttpServletResponse response);
 
     /**
      * 检查用户登陆状态

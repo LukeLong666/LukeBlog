@@ -24,7 +24,7 @@ public interface ArticleMapper {
 
     User findUserById(String userId);
 
-    @Update("update tb_article set title = #{title},content=#{content},labels=#{labels},category_id=#{categoryId},summary=#{summary} where id = #{id}")
+    @Update("update tb_article set view_count=#{viewCount}, title = #{title},content=#{content},labels=#{labels},category_id=#{categoryId},summary=#{summary} where id = #{id}")
     int updateById(Article articleFromDb);
 
     @Delete("delete from tb_article where id = #{articleId}")
@@ -35,4 +35,7 @@ public interface ArticleMapper {
 
     @Select("select id,`title`,user_id,category_id,`type`,`summary`,`labels` from tb_article where `labels` like CONCAT('%',#{label},'%') and (state = '1' or state='3')")
     List<Article> findAllWithLabel(String label);
+
+    @Select("select * from tb_article where (`title` like CONCAT('%',#{keyword},'%')) or (`summary` like CONCAT('%',#{keyword},'%')) or (`content` like CONCAT('%',#{keyword},'%'))")
+    List<Article> search(String keyword);
 }

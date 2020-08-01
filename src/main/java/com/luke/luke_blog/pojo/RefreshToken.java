@@ -13,6 +13,7 @@ public class RefreshToken {
     private String id;
     private String refreshToken;
     private String userId;
+    private String mobileTokenKey;
     private String tokenKey;
     private Date createTime;
     private Date updateTime;
@@ -33,7 +34,13 @@ public class RefreshToken {
         this.updateTime = updateTime;
     }
 
+    public String getMobileTokenKey() {
+        return mobileTokenKey;
+    }
 
+    public void setMobileTokenKey(String mobileTokenKey) {
+        this.mobileTokenKey = mobileTokenKey;
+    }
 
     public String getId() {
         return id;

@@ -2,6 +2,7 @@ package com.luke.luke_blog.controller.portal;
 
 import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.IArticleService;
+import com.luke.luke_blog.service.ICategoryService;
 import com.luke.luke_blog.utils.Constants;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,9 @@ public class ArticlePortalApi {
 
     @Resource
     private IArticleService articleService;
+
+    @Resource
+    private ICategoryService categoryService;
 
     /**
      * 文章列表
@@ -49,6 +53,16 @@ public class ArticlePortalApi {
     @GetMapping("/list/{categoryId}/{page}/{size}")
     public ResponseResult listArticleByCategoryId(@PathVariable("categoryId") String categoryId, @PathVariable("page") int page, @PathVariable("size") int size) {
         return articleService.listArticle(page, size, null, categoryId, Constants.Article.STATE_PUBLISH);
+    }
+
+    /**
+     * 得到categores
+     *
+     * @return {@link ResponseResult}
+     */
+    @GetMapping("/categories")
+    public ResponseResult getCategories() {
+        return categoryService.listCategories();
     }
 
     /**

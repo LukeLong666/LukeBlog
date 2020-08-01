@@ -66,7 +66,7 @@ public interface UserMapper {
      * @param userAccount 用户帐户
      * @return int
      */
-    @Update("update tb_user set user_name = #{userName},avatar = #{avatar},sign=#{sign},update_time=#{updateTime} where id = #{id}")
+    @Update("update tb_user set user_name = #{userName},avatar = #{avatar},sign=#{sign},update_time=#{updateTime},login_ip=#{loginIp} where id = #{id}")
     int updateById(User userAccount);
 
 

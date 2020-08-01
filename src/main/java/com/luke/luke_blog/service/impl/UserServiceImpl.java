@@ -335,7 +335,11 @@ public class UserServiceImpl implements IUserService {
      * @return {@link ResponseResult}
      */
     @Override
-    public ResponseResult doLogin(String captcha, String captchaKey, User user, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseResult doLogin(String captcha, String captchaKey, User user, String from, HttpServletRequest request, HttpServletResponse response) {
+        if (TextUtils.isEmpty(from)||
+                (!Constants.FROM_MOBILE.equals(from)&&!Constants.FROM_PC.equals(from))) {
+            from = Constants.FROM_MOBILE;
+        }
         //验证码
         String captchaFromRedis = (String) redisUtil.get(Constants.User.KEY_CAPTCHA_CONTENT + captchaKey);
         log.info("Redis captcha ===> " + captchaFromRedis);
@@ -370,7 +374,11 @@ public class UserServiceImpl implements IUserService {
         if (!"1".equals(userFromDB.getState())) {
             return ResponseResult.FAILURE("该账号已被封禁或删除");
         }
-        createToken(response, userFromDB);
+        //修改更新时间和登录ip
+        userFromDB.setLoginIp(request.getRemoteAddr());
+        userFromDB.setUpdateTime(new Date());
+        userDao.updateById(userFromDB);
+        createToken(response, userFromDB, from);
         //清楚redis人类验证码
         redisUtil.del(Constants.User.KEY_CAPTCHA_CONTENT + captchaKey);
         log.info("人类验证码已从redis内清除");
@@ -384,38 +392,83 @@ public class UserServiceImpl implements IUserService {
      * @param userFromDB 用户数据库
      * @return {@link String}
      */
-    private String createToken(HttpServletResponse response, User userFromDB) {
-        refreshTokenDao.deleteByUserId(userFromDB.getId());
+    private String createToken(HttpServletResponse response, User userFromDB, String from) {
+
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = requestAttributes.getRequest();
+        String oldTokenKey = CookieUtils.getCookie(request, Constants.User.COOKIE_TOKEN_KEY);
+        RefreshToken oldRefreshToken = refreshTokenDao.findOneByUserId(userFromDB.getId());
+        if (Constants.FROM_MOBILE.equals(from)) {
+            if (oldRefreshToken != null) {
+                redisUtil.del(Constants.User.KEY_TOKEN+oldRefreshToken.getMobileTokenKey());
+            }
+            refreshTokenDao.deleteMobileTokenKey(oldTokenKey);
+        } else if (Constants.FROM_PC.equals(from)) {
+            if (oldRefreshToken != null) {
+                redisUtil.del(Constants.User.KEY_TOKEN+oldRefreshToken.getTokenKey());
+            }
+            refreshTokenDao.deletePcTokenKey(oldTokenKey);
+        }
         log.info("createToken()");
         //生成token
-        Map<String, Object> claims = ClaimsUtils.user2Claims(userFromDB);
+        Map<String, Object> claims = ClaimsUtils.user2Claims(userFromDB,from);
         //默认有效两个小时
         String token = JwtUtil.createToken(claims);
-        log.info("token ==>>"+ token);
+        log.info("token ==>>" + token);
         //返回token的md5值,token会保存在redis里
         //前端访问携带MD5key,从redis中获取即可
-        String tokenKey = DigestUtils.md5DigestAsHex(token.getBytes());
-        log.info("tokenKey ==>>"+ tokenKey);
+        String tokenKey = from + DigestUtils.md5DigestAsHex(token.getBytes());
+        log.info("tokenKey ==>>" + tokenKey);
         //保存token到redis,有效期为2个小时,key是tokenKey
         redisUtil.set(Constants.User.KEY_TOKEN + tokenKey, token, Constants.TimeValue.HOUR * 2);
         //把tokenKey写道cookies里
         CookieUtils.setUpCookie(response, Constants.User.COOKIE_TOKEN_KEY, tokenKey);
         //这个要动态获取,可以从request获取
-        //生成refreshToken(一个月)
-        String refreshTokenValue = JwtUtil.createRefreshToken(userFromDB.getId(), (long)Constants.TimeValue.MONTH*1000);
-        //保存到数据库里面
-        //refreshToken tokenKey 用户ID 创建时间 更新时间
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setId(idWorker.nextId() + "");
-        refreshToken.setRefreshToken(refreshTokenValue);
-        refreshToken.setUserId(userFromDB.getId());
-        refreshToken.setTokenKey(tokenKey);
-        refreshToken.setCreateTime(new Date());
-        refreshToken.setUpdateTime(new Date());
-        //保存
-        refreshTokenDao.save(refreshToken);
-        log.info("refresh token 已保存在数据库");
-        return tokenKey;
+        //先判断数据库里有没有
+        //如果有,就更新,如果没有就新建
+        RefreshToken refreshToken = refreshTokenDao.findOneByUserId(userFromDB.getId());
+        if (refreshToken == null) {
+            refreshToken = new RefreshToken();
+            refreshToken.setId(idWorker.nextId() + "");
+            refreshToken.setCreateTime(new Date());
+            refreshToken.setUserId(userFromDB.getId());
+            //生成refreshToken(一个月)
+            String refreshTokenValue = JwtUtil.createRefreshToken(userFromDB.getId(), (long) Constants.TimeValue.MONTH * 1000);
+            //保存到数据库里面
+            //refreshToken tokenKey 用户ID 创建时间 更新时间
+            refreshToken.setRefreshToken(refreshTokenValue);
+            //判断来源,如果是手机的
+            if(Constants.FROM_PC.equals(from)){
+                refreshToken.setTokenKey(tokenKey);
+            } else{
+                refreshToken.setMobileTokenKey(tokenKey);
+            }
+            //如果是pc的
+            refreshToken.setUpdateTime(new Date());
+            //保存
+            refreshTokenDao.save(refreshToken);
+            log.info("refresh token 已保存在数据库");
+            return tokenKey;
+        }else{
+            //生成refreshToken(一个月)
+            String refreshTokenValue = JwtUtil.createRefreshToken(userFromDB.getId(), (long) Constants.TimeValue.MONTH * 1000);
+            //保存到数据库里面
+            //refreshToken tokenKey 用户ID 创建时间 更新时间
+            refreshToken.setRefreshToken(refreshTokenValue);
+            //判断来源,如果是手机的
+            if(Constants.FROM_PC.equals(from)){
+                refreshToken.setTokenKey(tokenKey);
+            } else{
+                refreshToken.setMobileTokenKey(tokenKey);
+            }
+            //如果是pc的
+            refreshToken.setUpdateTime(new Date());
+            //保存
+            refreshTokenDao.updateById(refreshToken);
+            log.info("refresh token 已保存在数据库");
+            return tokenKey;
+        }
+
     }
 
     /**
@@ -432,14 +485,24 @@ public class UserServiceImpl implements IUserService {
         HttpServletResponse response = requestAttributes.getResponse();
         log.info("checkUser()");
         String tokenKey = CookieUtils.getCookie(request, Constants.User.COOKIE_TOKEN_KEY);
+        if (TextUtils.isEmpty(tokenKey)) {
+            return null;
+        }
         log.info("tokenKey ===>> "+tokenKey);
+        // TODO: 2020/8/1  可能会出bug
         User user = parseByTokenKey(tokenKey);
+        String from = tokenKey.startsWith(Constants.FROM_PC) ? Constants.FROM_PC : Constants.FROM_MOBILE;
         if (user == null) {
             log.info("user == null");
             //根据refresh token判断
             //解析过期
             //去数据库查询refresh token
-            RefreshToken refreshToken = refreshTokenDao.findOneByTokenKey(tokenKey);
+            RefreshToken refreshToken = null;
+            if(Constants.FROM_PC.equals(from)){
+                refreshToken = refreshTokenDao.findOneByTokenKey(tokenKey);
+            }else {
+                refreshToken = refreshTokenDao.findOneByMobileTokenKey(tokenKey);
+            }
             //如果不存在,就是没登陆
             if (refreshToken == null) {
                 log.info("refreshToken == null");
@@ -454,7 +517,7 @@ public class UserServiceImpl implements IUserService {
                 User userFromDb = userDao.findOneById(userId);
                 //删除refreshToken记录
                 refreshTokenDao.deleteById(refreshToken.getId());
-                String newTokenKey = createToken(response, userFromDb);
+                String newTokenKey = createToken(response, userFromDb,from);
                 return parseByTokenKey(newTokenKey);
             } catch (Exception e1) {
                 //如果refresh token 过期了,就当前访问没有登录
@@ -471,6 +534,25 @@ public class UserServiceImpl implements IUserService {
      * @param tokenKey 令牌的关键
      * @return {@link User}
      */
+
+    private String parseFrom(String tokenKey){
+        log.info("parseByTokenKey()  tokenKey == >" + tokenKey);
+        String token = (String) redisUtil.get(Constants.User.KEY_TOKEN+tokenKey);
+        if (token != null) {
+            log.info("token != null");
+            try {
+                Claims claims = JwtUtil.parseJWT(token);
+                return ClaimsUtils.getFrom(claims);
+            } catch (Exception e) {
+                log.error(e.toString());
+                return null;
+            }
+
+        }
+        log.info("token == null");
+        return null;
+    }
+
     private User parseByTokenKey(String tokenKey) {
         log.info("parseByTokenKey()  tokenKey == >" + tokenKey);
         String token = (String) redisUtil.get(Constants.User.KEY_TOKEN+tokenKey);
@@ -706,7 +788,13 @@ public class UserServiceImpl implements IUserService {
         //删除cookie
         CookieUtils.deleteCookie(request,response,Constants.User.COOKIE_TOKEN_KEY);
         //删除mysql里的refreshToken
-        int result = refreshTokenDao.deleteByTokenKey(tokenKey);
+        //int result = refreshTokenDao.deleteByTokenKey(tokenKey);
+        int result;
+        if (Constants.FROM_PC.startsWith(tokenKey)) {
+            result = refreshTokenDao.deletePcTokenKey(tokenKey);
+        }else{
+            result = refreshTokenDao.deleteMobileTokenKey(tokenKey);
+        }
         return ResponseResult.SUCCESS("退出成功", result);
     }
 }

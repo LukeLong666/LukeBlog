@@ -32,4 +32,7 @@ public interface CommentMapper {
 
     @Update("update set `state`=#{state} where id = #{id}")
     int updateStateById(Comment comment);
+
+    @Delete("delete from tb_comment where article_id =#{articleId}")
+    int deleteByArticleId(String articleId);
 }

@@ -2,7 +2,9 @@ package com.luke.luke_blog.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.gson.Gson;
 import com.luke.luke_blog.dao.ArticleMapper;
+import com.luke.luke_blog.dao.CommentMapper;
 import com.luke.luke_blog.dao.LabelMapper;
 import com.luke.luke_blog.pojo.Article;
 import com.luke.luke_blog.pojo.Label;
@@ -12,6 +14,7 @@ import com.luke.luke_blog.service.IArticleService;
 import com.luke.luke_blog.service.IUserService;
 import com.luke.luke_blog.utils.Constants;
 import com.luke.luke_blog.utils.IdWorker;
+import com.luke.luke_blog.utils.RedisUtil;
 import com.luke.luke_blog.utils.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,10 +193,25 @@ public class ArticleServiceImpl implements IArticleService {
         return ResponseResult.SUCCESS("查询成功!", pageInfo);
     }
 
+    @Resource
+    private RedisUtil redisUtil;
+
+    @Resource
+    private Gson gson;
+
     @Override
     public ResponseResult getArticle(String articleId) {
         if (TextUtils.isEmpty(articleId)) {
             return ResponseResult.FAILURE("文章id不可以为空");
+        }
+        //先从redis里获取
+        String articleJson = (String) redisUtil.get(Constants.Article.KEY_ARTICLE_CACHE + articleId);
+        if(!TextUtils.isEmpty(articleJson)){
+            Article article = gson.fromJson(articleJson, Article.class);
+            //增加阅读数量
+            redisUtil.incr(Constants.Article.KEY_ARTICLE_VIEW_COUNT + articleId, 1);
+            article.setViewCount(Integer.parseInt((String) redisUtil.get(Constants.Article.KEY_ARTICLE_VIEW_COUNT + articleId)));
+            return ResponseResult.SUCCESS("查询成功", article);
         }
         Article articleFromDb = articleDao.findOneById(articleId);
         if (articleFromDb == null) {
@@ -205,10 +223,26 @@ public class ArticleServiceImpl implements IArticleService {
         if (user==null||!Constants.User.ROLES_ADMIN.equals(user.getRoles())) {
             //普通用户
             if (Constants.Article.STATE_PUBLISH.equals(state)||Constants.Article.STATE_TOP.equals(state)) {
+                redisUtil.set(Constants.Article.KEY_ARTICLE_CACHE + articleId, gson.toJson(articleFromDb), Constants.TimeValue.MIN * 5);
+                String articleViewCount = (String) redisUtil.get(Constants.Article.KEY_ARTICLE_VIEW_COUNT + articleId);
+                if (TextUtils.isEmpty(articleViewCount)) {
+                    redisUtil.set(Constants.Article.KEY_ARTICLE_VIEW_COUNT + articleId, String.valueOf(articleFromDb.getViewCount()+1));
+                }else{
+                    articleFromDb.setViewCount(1+Integer.parseInt(articleViewCount));
+                    articleDao.updateById(articleFromDb);
+                }
                 return ResponseResult.SUCCESS("查询成功", articleFromDb);
             }else{
                 return ResponseResult.FAILURE("文章不存在");
             }
+        }
+        redisUtil.set(Constants.Article.KEY_ARTICLE_CACHE + articleId, gson.toJson(articleFromDb), Constants.TimeValue.MIN * 5);
+        String articleViewCount = (String) redisUtil.get(Constants.Article.KEY_ARTICLE_VIEW_COUNT + articleId);
+        if (TextUtils.isEmpty(articleViewCount)) {
+            redisUtil.set(Constants.Article.KEY_ARTICLE_VIEW_COUNT + articleId, String.valueOf(articleFromDb.getViewCount()+1));
+        }else{
+            articleFromDb.setViewCount(1+Integer.parseInt(articleViewCount));
+            articleDao.updateById(articleFromDb);
         }
         //管理员
         return ResponseResult.SUCCESS("查询成功", articleFromDb);
@@ -251,9 +285,17 @@ public class ArticleServiceImpl implements IArticleService {
         return result > 0 ? ResponseResult.SUCCESS("修改成功", result) : ResponseResult.FAILURE("修改失败");
     }
 
+    @Resource
+    private CommentMapper commentDao;
+
     @Override
     public ResponseResult deleteArticle(String articleId) {
+        //先删除评论
+        commentDao.deleteByArticleId(articleId);
         int result = articleDao.deleteById(articleId);
+        //删除缓存
+        redisUtil.del(Constants.Article.KEY_ARTICLE_CACHE + articleId);
+        redisUtil.del(Constants.Article.KEY_ARTICLE_VIEW_COUNT + articleId);
         return result>0?ResponseResult.SUCCESS("删除成功",result):ResponseResult.FAILURE("文章不存在");
     }
 
@@ -299,5 +341,18 @@ public class ArticleServiceImpl implements IArticleService {
         log.info("PageInfo =====> "+pageInfo.toString());
         return ResponseResult.SUCCESS("查询成功!", pageInfo);
 
+    }
+
+    @Override
+    public ResponseResult search(String keyword, int page) {
+        //获取用户列表
+        if (page < Constants.Page.DEFAULT_PAGE) {
+            page = Constants.Page.DEFAULT_PAGE;
+        }
+        PageHelper.startPage(page, Constants.Page.MIN_SIZE);
+        List<Article> listArticles = articleDao.search(keyword);
+        PageInfo<Article> pageInfo = new PageInfo<>(listArticles);
+        log.info("PageInfo =====> "+pageInfo.toString());
+        return ResponseResult.SUCCESS("查询成功!", pageInfo);
     }
 }

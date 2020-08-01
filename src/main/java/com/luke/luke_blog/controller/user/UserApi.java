@@ -97,9 +97,10 @@ public class UserApi {
     public ResponseResult login(@PathVariable("captcha_key") String captchaKey,
                                 @PathVariable("captcha") String captcha,
                                 @RequestBody User user,
+                                @RequestParam(value = "from",required = false) String from,
                                 HttpServletRequest request,
                                 HttpServletResponse response) {
-        return userService.doLogin(captcha, captchaKey, user, request, response);
+        return userService.doLogin(captcha, captchaKey, user,from, request, response);
     }
 
     /**
