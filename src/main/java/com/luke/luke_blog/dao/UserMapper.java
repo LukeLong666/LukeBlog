@@ -37,6 +37,15 @@ public interface UserMapper {
      * @param userName 用户名
      * @return {@link User}
      */
+    @Select("select * from tb_user where user_name=#{userName} and id!=#{id}")
+    User findOneByUserNameAndId(String userName,String id);
+
+    /**
+     * 根据用户名查找用户
+     *
+     * @param userName 用户名
+     * @return {@link User}
+     */
     @Select("select * from tb_user where user_name=#{userName}")
     User findOneByUserName(String userName);
 
@@ -73,9 +82,16 @@ public interface UserMapper {
     @Update("update tb_user set state='0' where id = #{userId}")
     int deleteUserByState(String userId);
 
+    @Update("update tb_user set state='1' where id = #{userId}")
+    int UndeleteUserByState(String userId);
 
-    @Select("select id,user_name,roles,avatar,email,sign,state,reg_ip,login_ip,create_time from tb_user order by create_time DESC")
-    List<User> findAll();
+    /**
+     * 带有模糊查询,移至xml
+     * @param userName 用户名
+     * @param email    电子邮件
+     * @return {@link List<User>}
+     */
+    List<User> findAll(String userName,String email);
 
 
     @Update("update tb_user set password = #{encode} where email = #{email}")

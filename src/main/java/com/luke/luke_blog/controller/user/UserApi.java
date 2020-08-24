@@ -162,8 +162,10 @@ public class UserApi {
     @PreAuthorize("@permission.admin()")
     @GetMapping("/list")
     public ResponseResult listUsers(HttpServletRequest request, HttpServletResponse response,
-                                    @RequestParam("page") int page, @RequestParam("size") int size) {
-        return userService.listUsers(request, response, page, size);
+                                    @RequestParam("page") int page, @RequestParam("size") int size,
+                                    @RequestParam(value = "userName",required = false) String userName,
+                                    @RequestParam(value = "email",required = false) String email){
+        return userService.listUsers(request, response, page, size,userName,email);
     }
 
     /**
@@ -180,6 +182,12 @@ public class UserApi {
         return userService.deleteUserById(userId, request, response);
     }
 
+    @PreAuthorize("@permission.admin()")
+    @PutMapping("/{userId}")
+    public ResponseResult unDeleteUser(@PathVariable("userId") String userId,
+                                       HttpServletRequest request, HttpServletResponse response){
+        return userService.unDeleteUserById(userId, request, response);
+    }
 
     /**
      * 检查电子邮件是否重复
@@ -224,5 +232,10 @@ public class UserApi {
     @GetMapping("/logout")
     public ResponseResult logout() {
         return userService.logout();
+    }
+
+    @GetMapping("/checkToken")
+    public ResponseResult parseToken(){
+        return userService.parseToken();
     }
 }

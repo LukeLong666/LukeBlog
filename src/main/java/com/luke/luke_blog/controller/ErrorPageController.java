@@ -25,7 +25,7 @@ public class ErrorPageController {
 
     @RequestMapping("/500")
     public ResponseResult page500() {
-        return ResponseResult.FAILURE(50004, "系统繁忙,请稍后重试", null);
+        return ResponseResult.FAILURE(50000, "系统繁忙,请稍后重试", null);
     }
 
     @RequestMapping("/504")

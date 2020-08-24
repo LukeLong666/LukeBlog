@@ -9,8 +9,8 @@ import java.util.List;
 @Mapper
 public interface ArticleMapper {
 
-    @Insert("insert into tb_article(id,`title`,user_id,category_id,`content`,`type`,`summary`,`labels`,create_time,update_time,state) " +
-            "values(#{id},#{title},#{userId},#{categoryId},#{content},#{type},#{summary},#{labels},#{createTime},#{updateTime},#{state})")
+    @Insert("insert into tb_article(id,`title`,user_id,category_id,`content`,`cover`,`type`,`summary`,`labels`,create_time,update_time,state) " +
+            "values(#{id},#{title},#{userId},#{categoryId},#{content},#{cover},#{type},#{summary},#{labels},#{createTime},#{updateTime},#{state})")
     int save(Article article);
 
     //级联查询,xml编写

@@ -26,15 +26,15 @@ public interface CategoryMapper {
     @Select("select * from tb_categories where id = #{categoryId}")
     Category findOneById(String categoryId);
 
-    @Select("select * from tb_categories order by create_time DESC")
+    @Select("select * from tb_categories order by status DESC,`order`,create_time DESC")
     List<Category> findAll();
 
     @Select("select * from tb_categories where status=#{status} order by create_time DESC")
     List<Category> findAllByStatus(String status);
 
-    @Update("update tb_categories set name=#{name},description=#{description},pinyin=#{pinyin},`order`=#{order} where id = #{id}")
+    @Update("update tb_categories set name=#{name},description=#{description},pinyin=#{pinyin},`order`=#{order},update_time=#{updateTime} where id = #{id}")
     int updateById(Category categoryFromDb);
 
-    @Update("update tb_categories set status = '0' where id = #{categoryId}")
+    @Update("update tb_categories set status = '0' where id = #{categoryId} and status!='0'")
     int deleteById(String categoryId);
 }

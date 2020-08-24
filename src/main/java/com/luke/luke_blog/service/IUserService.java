@@ -113,6 +113,8 @@ public interface IUserService {
      */
     ResponseResult deleteUserById(String userId, HttpServletRequest request, HttpServletResponse response);
 
+    ResponseResult unDeleteUserById(String userId, HttpServletRequest request, HttpServletResponse response);
+
     /**
      * 用户列表
      *
@@ -122,7 +124,7 @@ public interface IUserService {
      * @param size     大小
      * @return {@link ResponseResult}
      */
-    ResponseResult listUsers(HttpServletRequest request, HttpServletResponse response, int page, int size);
+    ResponseResult listUsers(HttpServletRequest request, HttpServletResponse response, int page, int size,String userName,String email);
 
     /**
      * 更新密码
@@ -148,4 +150,11 @@ public interface IUserService {
      * @return {@link ResponseResult}
      */
     ResponseResult logout();
+
+    /**
+     * 解析令牌
+     *
+     * @return {@link ResponseResult}
+     */
+    ResponseResult parseToken();
 }

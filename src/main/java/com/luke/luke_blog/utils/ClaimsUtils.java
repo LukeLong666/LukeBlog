@@ -28,7 +28,7 @@ public class ClaimsUtils {
         claims.put(USER_NAME, user.getUserName());
         claims.put(ROLES, user.getRoles());
         claims.put(AVATAR, user.getAvatar());
-        claims.put(EMAIL, user.getAvatar());
+        claims.put(EMAIL, user.getEmail());
         claims.put(SIGN, user.getSign());
         claims.put(FROM, from);
         return claims;

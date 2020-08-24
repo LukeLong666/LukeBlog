@@ -37,7 +37,7 @@ public interface Constants {
 
     interface Page{
         int DEFAULT_PAGE = 1;
-        int MIN_SIZE = 5;
+        int MIN_SIZE = 2;
     }
 
     interface ImageType {

@@ -118,6 +118,7 @@ public class CategoryServiceImpl implements ICategoryService {
             log.info(TAG+" updateCategory() --> description : "+description);
             categoryFromDb.setDescription(description);
         }
+        categoryFromDb.setUpdateTime(new Date());
         categoryFromDb.setOrder(category.getOrder());
         //第三步保存数据
         int result = categoryDao.updateById(categoryFromDb);

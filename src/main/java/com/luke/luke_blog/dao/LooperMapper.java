@@ -13,7 +13,7 @@ public interface LooperMapper {
             "values(#{id},#{title},#{order},#{targetUrl},#{imageUrl},#{createTime},#{updateTime})")
     int save(Looper looper);
 
-    @Select("select * from tb_looper")
+    @Select("select * from tb_looper order by state DESC,`order`")
     List<Looper> findAll();
 
     @Select("select * from tb_looper where state = #{state}")

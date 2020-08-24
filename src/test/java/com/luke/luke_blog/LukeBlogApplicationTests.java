@@ -1,6 +1,7 @@
 package com.luke.luke_blog;
 
 import com.luke.luke_blog.utils.IdWorker;
+import io.jsonwebtoken.lang.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,8 +14,10 @@ class LukeBlogApplicationTests {
 
     @Test
     void contextLoads() {
+
         String fcc339d2230c5d3c47c7b370454ce502 = AA.convertMD5("fcc339d2230c5d3c47c7b370454ce502");
         System.out.println(fcc339d2230c5d3c47c7b370454ce502);
+        Assert.isNull(fcc339d2230c5d3c47c7b370454ce502);
 
     }
 

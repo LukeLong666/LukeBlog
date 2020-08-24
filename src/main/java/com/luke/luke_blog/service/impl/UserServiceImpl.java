@@ -206,9 +206,15 @@ public class UserServiceImpl implements IUserService {
             remoteAddr = remoteAddr.replaceAll(":", "_");
         }
         log.info("remoteAddress--->:" + remoteAddr);
+        String ipSendTiemValue = (String) redisUtil.get(Constants.User.KEY_EMAIL_SEND_IP + remoteAddr);
+        Integer ipSendTime = null;
+        if (ipSendTiemValue != null) {
+            ipSendTime = Integer.valueOf(ipSendTiemValue );
+        }else{
+            ipSendTime=1;
+        }
         //频率判断
-        Integer ipSendTime = (Integer) redisUtil.get(Constants.User.KEY_EMAIL_SEND_IP + remoteAddr);
-        if (ipSendTime != null && ipSendTime > 10) {
+        if (ipSendTime > 10) {
             return ResponseResult.FAILURE("您发送验证码也太频繁了");
         }
         Object addressSendTime = redisUtil.get(Constants.User.KEY_EMAIL_SEND_ADDRESS + emailAddress);
@@ -238,7 +244,7 @@ public class UserServiceImpl implements IUserService {
             ipSendTime = 0;
         }
         ipSendTime++;
-        redisUtil.set(Constants.User.KEY_EMAIL_SEND_IP + remoteAddr, ipSendTime, 60 * 60);
+        redisUtil.set(Constants.User.KEY_EMAIL_SEND_IP + remoteAddr, String.valueOf(ipSendTime), 60 * 60);
         redisUtil.set(Constants.User.KEY_EMAIL_SEND_ADDRESS + emailAddress, "true", 30);
         //保存code
         redisUtil.set(Constants.User.KEY_EMAIL_CODE_CONTENT + emailAddress, String.valueOf(code), 60 * 10);
@@ -482,6 +488,7 @@ public class UserServiceImpl implements IUserService {
     public User checkUser() {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
+        log.info("request:"+request);
         HttpServletResponse response = requestAttributes.getResponse();
         log.info("checkUser()");
         String tokenKey = CookieUtils.getCookie(request, Constants.User.COOKIE_TOKEN_KEY);
@@ -656,7 +663,7 @@ public class UserServiceImpl implements IUserService {
         //可以进行修改
         //头像,签名,用户名
         if (!TextUtils.isEmpty(user.getUserName())) {
-            User oneByUserName = userDao.findOneByUserName(user.getUserName());
+            User oneByUserName = userDao.findOneByUserNameAndId(user.getUserName(),user.getId());
             if (oneByUserName != null) {
                 return ResponseResult.FAILURE("该用户名已注册");
             }
@@ -674,7 +681,7 @@ public class UserServiceImpl implements IUserService {
         String tokenKey = CookieUtils.getCookie(request, Constants.User.COOKIE_TOKEN_KEY);
         redisUtil.del(Constants.User.KEY_TOKEN+tokenKey);
         log.info("删除旧的redis token缓存");
-        return ResponseResult.SUCCESS("用户信息更新成功");
+        return ResponseResult.SUCCESS("用户信息更新成功",null);
     }
 
     /**
@@ -696,6 +703,16 @@ public class UserServiceImpl implements IUserService {
         return ResponseResult.FAILURE("用户不存在");
     }
 
+    @Override
+    public ResponseResult unDeleteUserById(String userId, HttpServletRequest request, HttpServletResponse response) {
+        //操作
+        int result = userDao.UndeleteUserByState(userId);
+        if (result>0) {
+            return ResponseResult.SUCCESS("恢复成功", result);
+        }
+        return ResponseResult.FAILURE("用户不存在");
+    }
+
     /**
      * 用户列表
      *
@@ -706,7 +723,7 @@ public class UserServiceImpl implements IUserService {
      * @return {@link ResponseResult}
      */
     @Override
-    public ResponseResult listUsers(HttpServletRequest request, HttpServletResponse response, int page, int size) {
+    public ResponseResult listUsers(HttpServletRequest request, HttpServletResponse response, int page, int size,String userName,String email) {
         //获取用户列表
         if (page < Constants.Page.DEFAULT_PAGE) {
             page = Constants.Page.DEFAULT_PAGE;
@@ -715,7 +732,7 @@ public class UserServiceImpl implements IUserService {
             size = Constants.Page.MIN_SIZE;
         }
         PageHelper.startPage(page, size);
-        List<User> listUsers = userDao.findAll();
+        List<User> listUsers = userDao.findAll(userName,email);
         PageInfo<User> pageInfo = new PageInfo<>(listUsers);
         log.info("PageInfo =====> "+pageInfo.toString());
         return ResponseResult.SUCCESS("查询成功!", pageInfo);
@@ -796,5 +813,14 @@ public class UserServiceImpl implements IUserService {
             result = refreshTokenDao.deleteMobileTokenKey(tokenKey);
         }
         return ResponseResult.SUCCESS("退出成功", result);
+    }
+
+    @Override
+    public ResponseResult parseToken() {
+        User user = checkUser();
+        if (user == null) {
+            return ResponseResult.ACCOUNT_NOT_LOGIN("用户未等陆");
+        }
+        return ResponseResult.SUCCESS("获取成功", user);
     }
 }

@@ -1,16 +1,38 @@
+#配置项
+#端口
+luke.blog.server.port: 8079
+#项目地址
+luke.blog.application.name: '/luke_blog'
+#JDBC
+luke.blog.jdbc.username: root
+luke.blog.jdbc.password: root
+#本地
+luke.blog.jdbc.url: jdbc:mysql://localhost:3306/luke_blog?charterEncoding=UTF-8&userSSL=false
+#服务器
+#luke.blog.jdbc.url: url:jdbc:mysql://39.99.188.50:3306/luke_blog?charterEncoding=UTF-8&userSSL=false
+#redis
+luke.blog.redis.port: 6379
+luke.blog.redis.host: 39.99.188.50
+luke.blog.redis.password: 123456
+#图片保存路径
+luke.blog.image.save-path: F:\ProjectsFolder\IdeaProjects\images
+#图片大小限制 2MB
+luke.blog.image.max-size: 2097152
+
+
 server:
-  port: 8081
+  port: ${luke.blog.server.port}
+  servlet:
+    context-path: ${luke.blog.application.name}
 spring:
   application:
-    name: luke_blog
+    name: ${luke.blog.application.name}
   datasource:
-    #   \u6570\u636E\u6E90\u57FA\u672C\u914D\u7F6E
-    username: root
-    password: root
+    username: ${luke.blog.jdbc.username}
+    password: ${luke.blog.jdbc.password}
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/luke_blog?charterEncoding=utf-8&userSSL=false
+    url: ${luke.blog.jdbc.url}
     type: com.alibaba.druid.pool.DruidDataSource
-    #   \u6570\u636E\u6E90\u5176\u4ED6\u914D\u7F6E
     initialSize: 5
     minIdle: 5
     maxActive: 20
@@ -22,29 +44,25 @@ spring:
     testOnBorrow: false
     testOnReturn: false
     poolPreparedStatements: true
-    #   \u914D\u7F6E\u76D1\u63A7\u7EDF\u8BA1\u62E6\u622A\u7684filters\uFF0C\u53BB\u6389\u540E\u76D1\u63A7\u754C\u9762sql\u65E0\u6CD5\u7EDF\u8BA1\uFF0C'wall'\u7528\u4E8E\u9632\u706B\u5899
     filters: stat,wall
     maxPoolPreparedStatementPerConnectionSize: 20
     useGlobalDataSourceStat: true
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
   redis:
-    host: 39.99.188.50
-    port: 6379
-    password: 123456
+    host: ${luke.blog.redis.host}
+    port: ${luke.blog.redis.port}
+    password: ${luke.blog.redis.password}
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   configuration:
-    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
 logging:
   level:
-    com.luke.luke_blog.dao: info
+    com.luke.luke_blog.dao: debug
 
 pagehelper:
   helper-dialect: mysql
 
-luke.blog.image.save-path: F:\ProjectsFolder\IdeaProjects\images\image
-#2MB
-luke.blog.image.max-size: 2097152
+
 

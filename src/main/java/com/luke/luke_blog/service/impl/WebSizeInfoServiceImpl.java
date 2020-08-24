@@ -42,7 +42,7 @@ public class WebSizeInfoServiceImpl implements IWebSizeInfoService {
     public ResponseResult getWebSizeTitle() {
         Setting setting = settingsDao.findOneByKey(Constants.Settings.WEB_SIZE_TITLE);
         log.info(TAG+" getWebSizeTitle() --> "+" setting : "+setting);
-        return ResponseResult.SUCCESS("获取成功",setting);
+        return ResponseResult.SUCCESS("获取网站标题成功",setting);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class WebSizeInfoServiceImpl implements IWebSizeInfoService {
         }
         log.info(TAG+" putWebSizeTitle() --> "+" setting : "+setting);
         log.info(TAG+" putWebSizeTitle() --> "+" result : "+result);
-        return result>0?ResponseResult.SUCCESS("成功!",result):ResponseResult.FAILURE("失败");
+        return result>0?ResponseResult.SUCCESS("更新标题成功!",result):ResponseResult.FAILURE("失败");
     }
 
     @Override
@@ -125,7 +125,7 @@ public class WebSizeInfoServiceImpl implements IWebSizeInfoService {
         }
         log.info(TAG+" putSeoInfo() --> "+" keywordsFromDb : "+keywordsFromDb);
         log.info(TAG+" putSeoInfo() --> "+" result1+result2 : "+result1+result2);
-        return ResponseResult.SUCCESS("成功",result1+result2);
+        return ResponseResult.SUCCESS("更新SEO信息成功",result1+result2);
     }
 
     /**
@@ -159,7 +159,7 @@ public class WebSizeInfoServiceImpl implements IWebSizeInfoService {
         }
         Map<String, Integer> result = new HashMap<>();
         result.put(viewCount.getKey(), Integer.valueOf(viewCount.getValue()));
-        return ResponseResult.SUCCESS("获取成功",result);
+        return ResponseResult.SUCCESS("获取访问量成功",result);
     }
 
     @Resource
