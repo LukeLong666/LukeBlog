@@ -299,7 +299,7 @@ public class UserServiceImpl implements IUserService {
         Long key = Long.parseLong(captchaKey);
         String captchaVerifyCode = (String) redisUtil.get(Constants.User.KEY_CAPTCHA_CONTENT + key);
         if (TextUtils.isEmpty(captchaVerifyCode)) {
-            return ResponseResult.FAILURE("人类验证码无效!");
+            return ResponseResult.FAILURE("验证码无效!");
         }
         if (!captchaVerifyCode.equals(captchaCode)) {
             return ResponseResult.FAILURE("图灵验证码错误!");
@@ -350,8 +350,8 @@ public class UserServiceImpl implements IUserService {
         String captchaFromRedis = (String) redisUtil.get(Constants.User.KEY_CAPTCHA_CONTENT + captchaKey);
         log.info("Redis captcha ===> " + captchaFromRedis);
         if (!captcha.equals(captchaFromRedis)) {
-            log.info("人类验证码失败");
-            return ResponseResult.FAILURE("人类验证码失败");
+            log.info("验证码失败");
+            return ResponseResult.FAILURE("验证码失败");
         }
         String account = user.getUserName();
         if (TextUtils.isEmpty(account)) {
@@ -385,9 +385,9 @@ public class UserServiceImpl implements IUserService {
         userFromDB.setUpdateTime(new Date());
         userDao.updateById(userFromDB);
         createToken(response, userFromDB, from);
-        //清楚redis人类验证码
+        //清楚redis验证码
         redisUtil.del(Constants.User.KEY_CAPTCHA_CONTENT + captchaKey);
-        log.info("人类验证码已从redis内清除");
+        log.info("验证码已从redis内清除");
         return ResponseResult.SUCCESS(20001, "登陆成功", null);
     }
 
