@@ -5,12 +5,8 @@ import com.luke.luke_blog.pojo.Category;
 import com.luke.luke_blog.pojo.User;
 import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.ICategoryService;
-import com.luke.luke_blog.service.IUserService;
 import com.luke.luke_blog.utils.Constants;
-import com.luke.luke_blog.utils.IdWorker;
 import com.luke.luke_blog.utils.TextUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,20 +16,10 @@ import java.util.List;
 
 @Service("categoryService")
 @Transactional
-public class CategoryServiceImpl implements ICategoryService {
-
-    public static final String TAG="CategoryServiceImpl --> ";
-
-    Logger log = LoggerFactory.getLogger(CategoryServiceImpl.class);
+public class CategoryServiceImpl extends BaseServiceImpl implements ICategoryService {
 
     @Resource
     private CategoryMapper categoryDao;
-
-    @Resource
-    private IdWorker idWorker;
-
-    @Resource
-    private IUserService userService;
 
     @Override
     public ResponseResult addCategory(Category category) {
@@ -76,6 +62,11 @@ public class CategoryServiceImpl implements ICategoryService {
         return ResponseResult.SUCCESS("获取分类成功",category);
     }
 
+    /**
+     * 获取所有分类
+     *
+     * @return {@link ResponseResult}
+     */
     @Override
     public ResponseResult listCategories() {
         //判断用户类型,普通和未等陆的用户,只能,获取正常的分类

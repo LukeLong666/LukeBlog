@@ -9,12 +9,8 @@ import com.luke.luke_blog.pojo.Comment;
 import com.luke.luke_blog.pojo.User;
 import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.ICommentService;
-import com.luke.luke_blog.service.IUserService;
 import com.luke.luke_blog.utils.Constants;
-import com.luke.luke_blog.utils.IdWorker;
 import com.luke.luke_blog.utils.TextUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,17 +20,7 @@ import java.util.List;
 
 @Service("commentService")
 @Transactional
-public class CommentServiceImpl implements ICommentService {
-
-    public static final String TAG = "CommentServiceImpl ---> ";
-
-    Logger log = LoggerFactory.getLogger(CommentServiceImpl.class);
-
-    @Resource
-    private IUserService userService;
-
-    @Resource
-    private IdWorker idWorker;
+public class CommentServiceImpl extends BaseServiceImpl implements ICommentService {
 
     @Resource
     private ArticleMapper articleDao;

@@ -5,12 +5,8 @@ import com.luke.luke_blog.pojo.FriendLink;
 import com.luke.luke_blog.pojo.User;
 import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.IFriendLinkService;
-import com.luke.luke_blog.service.IUserService;
 import com.luke.luke_blog.utils.Constants;
-import com.luke.luke_blog.utils.IdWorker;
 import com.luke.luke_blog.utils.TextUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,20 +16,10 @@ import java.util.List;
 
 @Service("friendLinkService")
 @Transactional
-public class FriendLinkServiceImpl implements IFriendLinkService {
-
-    public static final String TAG="FriendLinkServiceImpl --> ";
-
-    Logger log = LoggerFactory.getLogger(FriendLinkServiceImpl.class);
-
-    @Resource
-    private IdWorker idWorker;
+public class FriendLinkServiceImpl extends BaseServiceImpl implements IFriendLinkService {
 
     @Resource
     private FriendLinkMapper friendLinkDao;
-
-    @Resource
-    private IUserService userService;
 
     @Override
     public ResponseResult addFriendLink(FriendLink friendLink) {

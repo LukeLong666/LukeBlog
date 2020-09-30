@@ -5,12 +5,8 @@ import com.luke.luke_blog.pojo.Looper;
 import com.luke.luke_blog.pojo.User;
 import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.ILoopService;
-import com.luke.luke_blog.service.IUserService;
 import com.luke.luke_blog.utils.Constants;
-import com.luke.luke_blog.utils.IdWorker;
 import com.luke.luke_blog.utils.TextUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,20 +16,10 @@ import java.util.List;
 
 @Service("loopService")
 @Transactional
-public class LoopServiceImpl implements ILoopService {
-
-    public static final String TAG="LoopServiceImpl --> ";
-
-    Logger log = LoggerFactory.getLogger(LoopServiceImpl.class);
-
-    @Resource
-    private IdWorker idWorker;
+public class LoopServiceImpl extends BaseServiceImpl implements ILoopService {
 
     @Resource
     private LooperMapper looperDao;
-
-    @Resource
-    private IUserService userService;
 
     @Override
     public ResponseResult addLooper(Looper looper) {
