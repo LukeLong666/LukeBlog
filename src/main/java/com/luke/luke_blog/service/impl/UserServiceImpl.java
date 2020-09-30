@@ -15,8 +15,6 @@ import com.luke.luke_blog.utils.*;
 import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
 import io.jsonwebtoken.Claims;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,12 +41,7 @@ import java.util.Random;
  */
 @Service("userService")
 @Transactional
-public class UserServiceImpl implements IUserService {
-
-    private Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
-
-    @Resource
-    private IdWorker idWorker;
+public class UserServiceImpl extends BaseServiceImpl implements IUserService {
 
     @Resource
     private UserMapper userDao;

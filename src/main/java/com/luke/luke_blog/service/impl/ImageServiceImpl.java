@@ -7,12 +7,8 @@ import com.luke.luke_blog.pojo.Image;
 import com.luke.luke_blog.pojo.User;
 import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.IImageService;
-import com.luke.luke_blog.service.IUserService;
 import com.luke.luke_blog.utils.Constants;
-import com.luke.luke_blog.utils.IdWorker;
 import com.luke.luke_blog.utils.TextUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +34,7 @@ import java.util.Map;
  */
 @Service("imageService")
 @Transactional
-public class ImageServiceImpl implements IImageService {
+public class ImageServiceImpl extends BaseServiceImpl implements IImageService {
 
     @Value("${luke.blog.image.save-path}")
     public String imagePath;
@@ -47,18 +43,8 @@ public class ImageServiceImpl implements IImageService {
 
     public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd");
 
-    public static final String TAG="ImageServiceImpl --> ";
-
-    Logger log = LoggerFactory.getLogger(ImageServiceImpl.class);
-
-    @Resource
-    private IdWorker idWorker;
-
     @Resource
     private ImageMapper imageDao;
-
-    @Resource
-    private IUserService userService;
 
     /**
      * 上传图片

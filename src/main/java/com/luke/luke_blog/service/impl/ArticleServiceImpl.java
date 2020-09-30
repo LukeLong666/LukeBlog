@@ -11,13 +11,9 @@ import com.luke.luke_blog.pojo.Label;
 import com.luke.luke_blog.pojo.User;
 import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.IArticleService;
-import com.luke.luke_blog.service.IUserService;
 import com.luke.luke_blog.utils.Constants;
-import com.luke.luke_blog.utils.IdWorker;
 import com.luke.luke_blog.utils.RedisUtil;
 import com.luke.luke_blog.utils.TextUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,17 +22,7 @@ import java.util.*;
 
 @Service("articleService")
 @Transactional
-public class ArticleServiceImpl implements IArticleService {
-
-    public static final String TAG = "ArticleServiceImpl ---> ";
-
-    Logger log = LoggerFactory.getLogger(ArticleServiceImpl.class);
-
-    @Resource
-    private IUserService userService;
-
-    @Resource
-    private IdWorker idWorker;
+public class ArticleServiceImpl extends BaseServiceImpl implements IArticleService {
 
     @Resource
     private ArticleMapper articleDao;

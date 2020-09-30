@@ -15,9 +15,14 @@ luke.blog.redis.port: 6379
 luke.blog.redis.host: 39.99.188.50
 luke.blog.redis.password: 123456
 #图片保存路径
-luke.blog.image.save-path: F:\ProjectsFolder\IdeaProjects\images
+#windows
+#luke.blog.image.save-path: F:\ProjectsFolder\IdeaProjects\images
+#linux
+luke.blog.image.save-path: /usr/local/springboot/images
 #图片大小限制 2MB
 luke.blog.image.max-size: 2097152
+#Cookie domain
+luke.blog.cookie.domain: '39.99.188.50'
 
 
 server:

@@ -5,11 +5,8 @@ import com.luke.luke_blog.pojo.Setting;
 import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.IWebSizeInfoService;
 import com.luke.luke_blog.utils.Constants;
-import com.luke.luke_blog.utils.IdWorker;
 import com.luke.luke_blog.utils.RedisUtil;
 import com.luke.luke_blog.utils.TextUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,14 +23,7 @@ import java.util.Map;
  */
 @Service("webSizeInfoService")
 @Transactional
-public class WebSizeInfoServiceImpl implements IWebSizeInfoService {
-
-    public static final String TAG="WebSizeInfoServiceImpl --> ";
-
-    Logger log = LoggerFactory.getLogger(WebSizeInfoServiceImpl.class);
-
-    @Resource
-    private IdWorker idWorker;
+public class WebSizeInfoServiceImpl extends BaseServiceImpl implements IWebSizeInfoService {
 
     @Resource
     private SettingsMapper settingsDao;

@@ -14,7 +14,7 @@ public class CookieUtils {
 
     public static final int default_age = 60*60*24*365;
 
-    public static final String domain = "localhost";
+    public static String domain="39.99.188.50";
 
     /**
      * 设置Cookie值
@@ -30,6 +30,7 @@ public class CookieUtils {
     public static void setUpCookie(HttpServletResponse response, String key, String value,int age) {
         Cookie cookie = new Cookie(key, value);
         cookie.setPath("/");
+        System.out.println("domain===>"+domain);
         cookie.setDomain(domain);
         cookie.setMaxAge(age);
         response.addCookie(cookie);
