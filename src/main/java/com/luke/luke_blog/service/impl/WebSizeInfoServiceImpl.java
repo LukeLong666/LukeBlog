@@ -42,7 +42,7 @@ public class WebSizeInfoServiceImpl implements IWebSizeInfoService {
     public ResponseResult getWebSizeTitle() {
         Setting setting = settingsDao.findOneByKey(Constants.Settings.WEB_SIZE_TITLE);
         log.info(TAG+" getWebSizeTitle() --> "+" setting : "+setting);
-        return ResponseResult.SUCCESS("获取网站标题成功",setting);
+        return ResponseResult.SUCCESS("获取网站标题成功!",setting);
     }
 
     @Override
