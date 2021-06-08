@@ -22,8 +22,6 @@ public interface ArticleMapper {
     @Select("select id,`title`,user_id,category_id,`type`,`summary`,`labels` from tb_article where (state='1' or state='3') and labels like CONCAT('%',#{label},'%') and id!=#{articleId} limit #{size}")
     List<Article> findAllByLabel(String label,String articleId,int size);
 
-    User findUserById(String userId);
-
     @Update("update tb_article set view_count=#{viewCount}, title = #{title},content=#{content},labels=#{labels},category_id=#{categoryId},summary=#{summary} where id = #{id}")
     int updateById(Article articleFromDb);
 
