@@ -15,6 +15,9 @@ public interface Constants {
 
     interface Common{
         String ONE = "1";
+        String ZERO = "0";
+        String STATE_YES = "1";
+        String STATE_NO = "0";
     }
 
     interface Number{
@@ -31,7 +34,7 @@ public interface Constants {
         String ROLES_ADMIN = "role_admin";
         String ROLES_NORMAL = "role_normal";
         String DEFAULT_AVATAR = "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2133261431,2800577620&fm=26&gp=0.jpg";
-        String DEFAULT_STATE = "1";
+        String DEFAULT_STATE = Common.STATE_YES;
         String KEY_EMAIL_SEND_ADDRESS = "key_email_send_address_";
         String KEY_EMAIL_SEND_IP = "key_email_send_ip_";
         String KEY_TOKEN = "key_token_";
