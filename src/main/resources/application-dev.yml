@@ -1,4 +1,6 @@
 #配置项
+#华为云服务器地址
+luke.blog.huawei.address: 121.37.131.116
 #端口
 luke.blog.server.port: 8079
 #项目地址
@@ -7,14 +9,14 @@ luke.blog.application.name: '/luke_blog'
 luke.blog.jdbc.username: root
 luke.blog.jdbc.password: root
 #本地
-luke.blog.jdbc.url: jdbc:mysql://localhost:3306/luke_blog?charterEncoding=UTF-8&userSSL=false
+luke.blog.jdbc.url: jdbc:mysql://${luke.blog.huawei.address}:3306/luke_blog?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
 #服务器
 #luke.blog.jdbc.url: url:jdbc:mysql://39.99.188.50:3306/luke_blog?charterEncoding=UTF-8&userSSL=false
 #redis
 luke.blog.redis.port: 6379
 #luke.blog.redis.host: 39.99.188.50
-luke.blog.redis.host: 192.168.121.128
-luke.blog.redis.password: 123456
+luke.blog.redis.host: ${luke.blog.huawei.address}
+luke.blog.redis.password: root
 #图片保存路径
 #windows
 luke.blog.image.save-path: F:\ProjectsFolder\IdeaProjects\images
