@@ -27,4 +27,11 @@ public class TextUtils {
         Matcher m = p.matcher(phoneNumber);
         return m.matches();
     }
+
+    public static boolean isAllNumber(String num) {
+        String regEx = "/^[0-9]*$/";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(num);
+        return m.matches();
+    }
 }
