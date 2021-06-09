@@ -9,6 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * 形象门户api
+ *
+ * @author zxl
+ * @date 2021/06/09
+ */
 @RestController
 @RequestMapping("/portal/image")
 public class ImagePortalApi {
