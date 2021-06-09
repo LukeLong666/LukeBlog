@@ -8,6 +8,12 @@ import java.io.File;
 import java.net.URL;
 import java.util.*;
 
+/**
+ * 邮件发送者
+ *
+ * @author zxl
+ * @date 2021/06/09
+ */
 public class EmailSender {
     private static final String TAG = "EmailSender";
     private static Session session;
