@@ -7,6 +7,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 
+/**
+ * @author Administrator
+ */
 public class BaseServiceImpl {
 
     public final String TAG = "--> "+this.getClass().getSimpleName()+" ---> ";

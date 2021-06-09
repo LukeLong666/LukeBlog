@@ -56,7 +56,7 @@ public interface UserMapper {
      * @param emailAddress 邮箱地址
      * @return {@link User}
      */
-    @Select("select * from tb_user where email=#{emailAddress}")
+    @Select("select id from tb_user where email=#{emailAddress}")
     User findOneByEmail(String emailAddress);
 
     /**

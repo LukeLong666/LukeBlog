@@ -13,7 +13,18 @@ public interface Constants {
 
     int DEFAULT_SIZE = 30;
 
+    interface Common{
+        String ONE = "1";
+    }
+
+    interface Number{
+        int TEN = 10;
+    }
+
     interface User {
+        String SEND_EMAIL_TYPE_REGISTER = "register";
+        String SEND_EMAIL_TYPE_UPDATE = "update";
+        String SEND_EMAIL_TYPE_FORGET = "forget";
         int KEY_CAPTCHA_MIN_LENGTH = 13;
         String KEY_CAPTCHA_CONTENT = "key_captcha_content_";
         String KEY_EMAIL_CODE_CONTENT = "key_email_code_content_";

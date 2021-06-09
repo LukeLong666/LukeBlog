@@ -177,11 +177,11 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
         }
         User userByEmail = userDao.findOneByEmail(emailAddress);
         //根据功能类型查询邮箱是否存在
-        if ("register".equals(type) || "update".equals(type)) {
+        if (Constants.User.SEND_EMAIL_TYPE_REGISTER.equals(type) || Constants.User.SEND_EMAIL_TYPE_UPDATE.equals(type)) {
             if (userByEmail != null) {
                 return ResponseResult.FAILURE("改邮箱已被注册");
             }
-        } else if ("forget".equals(type)) {
+        } else if (Constants.User.SEND_EMAIL_TYPE_FORGET.equals(type)) {
             if (userByEmail == null) {
                 return ResponseResult.FAILURE("改邮箱并未注册");
             }
@@ -192,15 +192,15 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
             remoteAddr = remoteAddr.replaceAll(":", "_");
         }
         log.info("remoteAddress--->:" + remoteAddr);
-        String ipSendTiemValue = (String) redisUtil.get(Constants.User.KEY_EMAIL_SEND_IP + remoteAddr);
-        Integer ipSendTime = null;
-        if (ipSendTiemValue != null) {
-            ipSendTime = Integer.valueOf(ipSendTiemValue );
+        String ipSendTimeValue = (String) redisUtil.get(Constants.User.KEY_EMAIL_SEND_IP + remoteAddr);
+        int ipSendTime;
+        if (ipSendTimeValue != null) {
+            ipSendTime = Integer.parseInt(ipSendTimeValue);
         }else{
             ipSendTime=1;
         }
         //频率判断
-        if (ipSendTime > 10) {
+        if (ipSendTime > Constants.Number.TEN) {
             return ResponseResult.FAILURE("您发送验证码也太频繁了");
         }
         Object addressSendTime = redisUtil.get(Constants.User.KEY_EMAIL_SEND_ADDRESS + emailAddress);
@@ -213,10 +213,13 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
         if (!isEmailFormatOk) {
             return ResponseResult.FAILURE("邮箱地址格式不正确");
         }
+
+
         int code = random.nextInt(999999);
         if (code < 100000) {
             code += 100000;
         }
+
         //发送验证码,验证码范围6位数100000-999999
         try {
             log.info("verify code ===> "+code);
@@ -225,10 +228,6 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
             return ResponseResult.FAILURE("验证码发送失败,请稍后重试");
         }
 
-        //记录发送记录和code
-        if (ipSendTime == null) {
-            ipSendTime = 0;
-        }
         ipSendTime++;
         redisUtil.set(Constants.User.KEY_EMAIL_SEND_IP + remoteAddr, String.valueOf(ipSendTime), 60 * 60);
         redisUtil.set(Constants.User.KEY_EMAIL_SEND_ADDRESS + emailAddress, "true", 30);
