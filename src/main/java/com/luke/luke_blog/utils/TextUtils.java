@@ -87,4 +87,18 @@ public class TextUtils {
         Matcher m = p.matcher(str);
         return m.matches();
     }
+
+    /**
+     * 验证字符串是否只包含汉字
+     * 暂时有问题
+     * @param str str
+     * @return boolean
+     */
+    @Deprecated
+    public static boolean isChinese(String str) {
+        String regEx = "/^[\\u4e00-\\u9fa5],{0,}$/";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(str);
+        return m.matches();
+    }
 }
