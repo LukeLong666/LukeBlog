@@ -14,6 +14,7 @@ public interface Constants {
     int DEFAULT_SIZE = 30;
 
     interface User {
+        int KEY_CAPTCHA_MIN_LENGTH = 13;
         String KEY_CAPTCHA_CONTENT = "key_captcha_content_";
         String KEY_EMAIL_CODE_CONTENT = "key_email_code_content_";
         String ROLES_ADMIN = "role_admin";

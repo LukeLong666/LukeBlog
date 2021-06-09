@@ -59,7 +59,7 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
     private RedisUtil redisUtil;
 
     @Resource
-    Random random;
+    private Random random;
 
     @Resource
     private Gson gson;
@@ -69,7 +69,7 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
 
 
     /**
-     * init经理账户
+     * 初始化管理员账号
      *
      * @param user    用户
      * @param request 请求
@@ -128,18 +128,17 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
      * 创建验证码
      *
      * @param response   响应
-     * @param captchaKey 验证码的关键
-     * @throws IOException ioexception
+     * @param captchaKey 验证码的键
+     * @throws IOException IO异常
      */
     @Override
     public void createCaptcha(HttpServletResponse response, String captchaKey) throws IOException {
-        if (TextUtils.isEmpty(captchaKey) || captchaKey.length() < 13) {
+        if (TextUtils.isEmpty(captchaKey) || captchaKey.length() < Constants.User.KEY_CAPTCHA_MIN_LENGTH) {
             return;
         }
-        long key = 0L;
+        long key;
         try {
             key = Long.parseLong(captchaKey);
-            //处理
         } catch (Exception e) {
             return;
         }
@@ -156,10 +155,9 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
         // 设置类型，纯数字、纯字母、字母数字混合
         specCaptcha.setCharType(Captcha.TYPE_ONLY_NUMBER);
         String content = specCaptcha.text().toLowerCase();
-
         //存入redis
-        //十分钟有效
-        redisUtil.set(Constants.User.KEY_CAPTCHA_CONTENT + key, content, 60 * 10);
+        //两分钟有效
+        redisUtil.set(Constants.User.KEY_CAPTCHA_CONTENT + key, content, 60 * 2);
         // 输出图片流
         specCaptcha.out(response.getOutputStream());
     }
