@@ -281,7 +281,7 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
             redisUtil.del(Constants.User.KEY_EMAIL_CODE_CONTENT + email);
         }
         //检查图灵验证码是否正确
-        Long key = Long.parseLong(captchaKey);
+        long key = Long.parseLong(captchaKey);
         String captchaVerifyCode = (String) redisUtil.get(Constants.User.KEY_CAPTCHA_CONTENT + key);
         if (TextUtils.isEmpty(captchaVerifyCode)) {
             return ResponseResult.FAILURE("验证码无效!");
@@ -380,15 +380,14 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
      * 创建令牌
      *
      * @param response   响应
-     * @param userFromDB 用户数据库
+     * @param userFromDb 用户数据库
      * @return {@link String}
      */
-    private String createToken(HttpServletResponse response, User userFromDB, String from) {
-
+    private String createToken(HttpServletResponse response, User userFromDb, String from) {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
         String oldTokenKey = CookieUtils.getCookie(request, Constants.User.COOKIE_TOKEN_KEY);
-        RefreshToken oldRefreshToken = refreshTokenDao.findOneByUserId(userFromDB.getId());
+        RefreshToken oldRefreshToken = refreshTokenDao.findOneByUserId(userFromDb.getId());
         if (Constants.FROM_MOBILE.equals(from)) {
             if (oldRefreshToken != null) {
                 redisUtil.del(Constants.User.KEY_TOKEN+oldRefreshToken.getMobileTokenKey());
@@ -402,7 +401,7 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
         }
         log.info("createToken()");
         //生成token
-        Map<String, Object> claims = ClaimsUtils.user2Claims(userFromDB,from);
+        Map<String, Object> claims = ClaimsUtils.user2Claims(userFromDb,from);
         //默认有效两个小时
         String token = JwtUtil.createToken(claims);
         log.info("token ==>>" + token);
@@ -417,14 +416,14 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
         //这个要动态获取,可以从request获取
         //先判断数据库里有没有
         //如果有,就更新,如果没有就新建
-        RefreshToken refreshToken = refreshTokenDao.findOneByUserId(userFromDB.getId());
+        RefreshToken refreshToken = refreshTokenDao.findOneByUserId(userFromDb.getId());
         if (refreshToken == null) {
             refreshToken = new RefreshToken();
             refreshToken.setId(idWorker.nextId() + "");
             refreshToken.setCreateTime(new Date());
-            refreshToken.setUserId(userFromDB.getId());
+            refreshToken.setUserId(userFromDb.getId());
             //生成refreshToken(一个月)
-            String refreshTokenValue = JwtUtil.createRefreshToken(userFromDB.getId(), (long) Constants.TimeValue.MONTH * 1000);
+            String refreshTokenValue = JwtUtil.createRefreshToken(userFromDb.getId(), (long) Constants.TimeValue.MONTH * 1000);
             //保存到数据库里面
             //refreshToken tokenKey 用户ID 创建时间 更新时间
             refreshToken.setRefreshToken(refreshTokenValue);
@@ -442,7 +441,7 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
             return tokenKey;
         }else{
             //生成refreshToken(一个月)
-            String refreshTokenValue = JwtUtil.createRefreshToken(userFromDB.getId(), (long) Constants.TimeValue.MONTH * 1000);
+            String refreshTokenValue = JwtUtil.createRefreshToken(userFromDb.getId(), (long) Constants.TimeValue.MONTH * 1000);
             //保存到数据库里面
             //refreshToken tokenKey 用户ID 创建时间 更新时间
             refreshToken.setRefreshToken(refreshTokenValue);
