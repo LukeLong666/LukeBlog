@@ -21,7 +21,7 @@ public interface SettingsMapper {
      * @param key 关键
      * @return {@link Setting}
      */
-    @Select("select * from tb_settings where `key` = #{key}")
+    @Select("select id from tb_settings where `key` = #{key}")
     Setting findOneByKey(String key);
 
 

@@ -3,8 +3,7 @@ package com.luke.luke_blog.controller.user;
 import com.luke.luke_blog.pojo.User;
 import com.luke.luke_blog.response.ResponseResult;
 import com.luke.luke_blog.service.IUserService;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +19,7 @@ import java.io.IOException;
  * @author zhang
  * @date 2020/07/21
  */
+@Api(tags = "用户相关接口")
 @RestController
 @RequestMapping("/user")
 public class UserApi {
@@ -32,6 +32,7 @@ public class UserApi {
      *
      * @return {@link ResponseResult}
      */
+    @ApiOperation("初始化管理员账号")
     @PostMapping("/admin_account")
     public ResponseResult initManagerAccount(@RequestBody User user, HttpServletRequest request) {
         return userService.initManagerAccount(user, request);
@@ -42,8 +43,9 @@ public class UserApi {
      *
      * @return {@link ResponseResult}
      */
+    @ApiOperation("获取验证码")
     @GetMapping("/captcha")
-    public void getCaptcha(HttpServletResponse response, @RequestParam("captcha_key") String captchaKey) throws IOException {
+    public void getCaptcha(HttpServletResponse response,@ApiParam("验证码键") @RequestParam("captcha_key") String captchaKey) throws IOException {
         try {
             userService.createCaptcha(response, captchaKey);
         } catch (Exception e) {

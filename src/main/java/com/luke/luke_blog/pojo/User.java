@@ -1,5 +1,8 @@
 package com.luke.luke_blog.pojo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -9,8 +12,10 @@ import java.util.Date;
  * @author zhang
  * @date 2020/07/20
  */
+@ApiModel("用户实体")
 public class User implements Serializable {
 
+    @ApiModelProperty("ID")
     private String id;
     private String userName;
     private String password;

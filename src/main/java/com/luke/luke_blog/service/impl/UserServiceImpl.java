@@ -76,11 +76,12 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
      * @return {@link ResponseResult}
      */
     @Override
-    public ResponseResult initManagerAccount(User user, HttpServletRequest request) {
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseResult initManagerAccount(User user, HttpServletRequest request){
         //检查是否有初始化
         Setting managerAccountState = settingsDao.findOneByKey(Constants.Settings.MANAGER_ACCOUNT_INIT_STATE);
         if (managerAccountState != null) {
-            return ResponseResult.FAILURE("已经初始化过了");
+            return ResponseResult.FAILURE("管理员账号已经初始化过了");
         }
 
         //检查数据
@@ -93,12 +94,12 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
         if (TextUtils.isEmpty(user.getEmail())) {
             return ResponseResult.FAILURE("邮箱不能为空");
         }
+
         //补充数据
         user.setId(String.valueOf(idWorker.nextId()));
         user.setRoles(Constants.User.ROLES_ADMIN);
         user.setAvatar(Constants.User.DEFAULT_AVATAR);
         user.setState(Constants.User.DEFAULT_STATE);
-        String localAddr = request.getLocalAddr();
         String remoteAddr = request.getRemoteAddr();
         user.setLoginIp(remoteAddr);
         user.setRegIp(remoteAddr);
@@ -110,10 +111,7 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
         String encodedPassword = passwordEncoder.encode(originPassword);
         user.setPassword(encodedPassword);
         //保存到数据库
-        int result1 = userDao.save(user);
-        if (result1 == 0) {
-            return ResponseResult.FAILURE("添加失败!");
-        }
+        userDao.save(user);
         //更细已经添加的标记
         //肯定没有
         Setting setting = new Setting();
@@ -122,10 +120,7 @@ public class UserServiceImpl extends BaseServiceImpl implements IUserService {
         setting.setUpdateTime(new Date());
         setting.setKey(Constants.Settings.MANAGER_ACCOUNT_INIT_STATE);
         setting.setValue("1");
-        int result2 = settingsDao.save(setting);
-        if (result2 == 0) {
-            return ResponseResult.FAILURE("添加失败!");
-        }
+        settingsDao.save(setting);
         return ResponseResult.SUCCESS("添加成功", null);
     }
 
