@@ -26,6 +26,13 @@ luke.blog.image.save-path: F:\ProjectsFolder\IdeaProjects\images
 luke.blog.image.max-size: 2097152
 #Cookie domain
 luke.blog.cookie.domain: 'localhost'
+#腾讯cos对象存储所需属性
+luke.blog.tencent.file.SECRET_ID: AKIDrZDeronzsuTP6kyHsMceS2bvw3oaqYjd
+luke.blog.tencent.file.SECRET_KEY: wb0MI2mJI1hBUbOuTpwncEigSyfkhu86
+luke.blog.tencent.file.REGION: ap-nanjing
+luke.blog.tencent.file.BUCKET_NAME: lukeblog-1300203650
+luke.blog.tencent.file.REQUEST_PATH: https://lukeblog-1300203650.cos.ap-nanjing.myqcloud.com
+luke.blog.tencent.file.PREFIX: lukeblog
 
 
 server:
