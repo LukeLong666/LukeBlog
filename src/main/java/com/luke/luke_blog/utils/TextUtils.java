@@ -15,21 +15,21 @@ public class TextUtils {
     }
 
     public static boolean isEmailAddress(String str) {
-        String regEx = "/^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$/";
+        String regEx = "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
         Pattern p = Pattern.compile(regEx);
         Matcher m = p.matcher(str);
         return m.matches();
     }
 
     public static boolean isPhoneNumber(String str) {
-        String regEx = "/^1(?:3\\d|4[4-9]|5[0-35-9]|6[67]|7[013-8]|8\\d|9\\d)\\d{8}$/";
+        String regEx = "^1(?:3\\d|4[4-9]|5[0-35-9]|6[67]|7[013-8]|8\\d|9\\d)\\d{8}$";
         Pattern p = Pattern.compile(regEx);
         Matcher m = p.matcher(str);
         return m.matches();
     }
 
     public static boolean isAllNumber(String str) {
-        String regEx = "/^[0-9]*$/";
+        String regEx = "^[0-9]*$";
         Pattern p = Pattern.compile(regEx);
         Matcher m = p.matcher(str);
         return m.matches();
@@ -43,7 +43,7 @@ public class TextUtils {
      * @return boolean 是否符合要求
      */
     public static boolean passwordCheck(String str) {
-        String regEx = "/^[a-zA-Z]\\w{5,17}$/";
+        String regEx = "^[a-zA-Z]\\w{5,17}$";
         Pattern p = Pattern.compile(regEx);
         Matcher m = p.matcher(str);
         return m.matches();
@@ -56,7 +56,7 @@ public class TextUtils {
      * @return boolean
      */
     public static boolean isWordLowAndUp(String str) {
-        String regEx = "/^[A-Za-z]+$/";
+        String regEx = "^[A-Za-z]+$";
         Pattern p = Pattern.compile(regEx);
         Matcher m = p.matcher(str);
         return m.matches();
@@ -69,7 +69,7 @@ public class TextUtils {
      * @return boolean
      */
     public static boolean isWordLow(String str) {
-        String regEx = "/^[a-z]+$/";
+        String regEx = "^[a-z]+$";
         Pattern p = Pattern.compile(regEx);
         Matcher m = p.matcher(str);
         return m.matches();
@@ -82,7 +82,7 @@ public class TextUtils {
      * @return boolean
      */
     public static boolean isWordUp(String str) {
-        String regEx = "/^[A-Z]+$/";
+        String regEx = "^[A-Z]+$";
         Pattern p = Pattern.compile(regEx);
         Matcher m = p.matcher(str);
         return m.matches();
@@ -96,7 +96,7 @@ public class TextUtils {
      */
     @Deprecated
     public static boolean isChinese(String str) {
-        String regEx = "/^[\\u4e00-\\u9fa5],{0,}$/";
+        String regEx = "^[\\u4e00-\\u9fa5],{0,}$";
         Pattern p = Pattern.compile(regEx);
         Matcher m = p.matcher(str);
         return m.matches();
